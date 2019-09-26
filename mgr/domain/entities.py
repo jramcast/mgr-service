@@ -1,0 +1,2 @@
+class ModelInputFeatures(ABC):
+    pass

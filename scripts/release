@@ -1,0 +1,99 @@
+#!/bin/bash
+# Description: Modifies current tag to help with deployment
+# sudo: no
+
+help(){
+    if [ "$#" -lt 1 ] || [ "$#" -gt 2 ]
+    then
+        echo "Usage: $0 <patch | minor | major> [message]"
+        echo "Creates a new tag for release"
+        return 1
+    fi
+}
+
+
+check_repository_status(){
+    git symbolic-ref --short HEAD | grep ^master$ || return 1
+    local CHANGES=$(git diff-index HEAD --)
+    if [ -n "$CHANGES" ]
+    then
+        return 2
+    fi
+}
+
+
+increase_tag_version(){
+    #get highest tag number
+    local VERSION=`git describe --abbrev=0 --tags`
+    if [ -z "$VERSION" ]
+    then
+        VERSION=v0.0.0
+    fi
+    #replace . with space so can split into an array
+    local VERSION_BITS=(${VERSION//./ })
+
+    #get number parts and increase last one by 1
+    local VNUM1=${VERSION_BITS[0]/v/}
+    local VNUM2=${VERSION_BITS[1]}
+    local VNUM3=${VERSION_BITS[2]}
+
+    if [ "$1" = "patch" ]
+    then
+        VNUM3=$((VNUM3+1))
+    elif [ "$1" = "minor" ]
+    then
+        VNUM2=$((VNUM2+1))
+        VNUM3=0
+    elif [ "$1" = "major" ]
+    then
+        VNUM1=$((VNUM1+1))
+        VNUM2=0
+        VNUM3=0
+    else
+        printf "\e[91m* [E] $1 is not a valid input. Insert patch, minor or major \e[0m \n \n"
+        return 1
+    fi
+    NEW_VERSION="v$VNUM1.$VNUM2.$VNUM3"
+    echo $NEW_VERSION
+}
+
+
+tag_commit(){
+    printf "\e[94m* New tag: $1 $2 \e[0m \n"
+    if [ -n "$2" ]
+    then
+        git tag -a $1 -m"$2"
+    else
+        git tag -a $1 -m"$1"
+    fi
+}
+
+
+main(){
+    help "$@"
+    if [ $? -eq 1 ]
+    then
+        return 1
+    fi
+    check_repository_status
+    local ERROR=$?
+    if [ $ERROR -eq 1 ]
+    then
+        printf "\e[91mNot in 'master' branch. Aborting release\e[0m\n"
+        return 1
+    elif [ $ERROR -eq 2 ]
+    then
+        printf "\e[91mThere are uncommited changes. Aborting release\e[0m\n"
+        return 1
+    fi
+    NEW_VERSION=$(increase_tag_version $1)
+    if [ $? -eq 1 ]
+    then
+        echo $NEW_VERSION
+        return 1
+    fi
+    echo $(tag_commit $NEW_VERSION "$2")
+    git push --follow-tags
+}
+
+main "$@"
