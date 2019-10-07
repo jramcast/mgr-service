@@ -8,6 +8,10 @@ flake8 = "*"
 
 [packages]
 aiohttp = "*"
+flask = "*"
 
 [requires]
 python_version = "3.7"
+
+[scripts]
+serve = "flask run --host=0.0.0.0"

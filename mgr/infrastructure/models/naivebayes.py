@@ -1,9 +1,13 @@
-from ... import domain
+from dataclasses import dataclass
+from ...domain.interfaces import Model
 
-class NaiveBayesInputFeatures(domain.entities.ModelInputFeatures):
+
+@dataclass
+class NaiveBayesInputFeatures():
     pass
 
-class NaiveBayesModel(domain.interfaces.Model):
+
+class NaiveBayesModel(Model):
 
     def predict(self, features: NaiveBayesInputFeatures):
-        
+        return "Flamenco"
