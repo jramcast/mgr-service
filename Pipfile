@@ -5,9 +5,13 @@ verify_ssl = true
 
 [dev-packages]
 flake8 = "*"
+pytest = "*"
+pytest-cov = "*"
+coverage = "*"
+rope = "*"
+autopep8 = "*"
 
 [packages]
-aiohttp = "*"
 flask = "*"
 
 [requires]
@@ -15,3 +19,6 @@ python_version = "3.7"
 
 [scripts]
 serve = "flask run --host=0.0.0.0"
+test = "python -m pytest tests"
+test-watch = "watch --color pipenv run test --color=yes"
+test-ci = "python -m pytest tests --cov=service -v"

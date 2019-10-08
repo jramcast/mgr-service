@@ -3,8 +3,14 @@ from dataclasses import dataclass
 
 
 @dataclass
-class PredictionResult:
-    labels: List[str]
+class PredictedLabel:
+    name: str
+    score: float
+
+
+@dataclass
+class ClassificationResult:
+    labels: List[PredictedLabel]
 
 
 class ModelInputFeatures:

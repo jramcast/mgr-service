@@ -1,22 +1,16 @@
 from aiohttp import web
-
-from service.redirection.requests import (
-    MetasRedirectRequest,
-    MetaPosByHotelRequest
-)
-from service.redirection.interfaces import UseCaseInterface
-from service.routes import Routes
+from ...usecases.classify import ClassifyUseCase
 
 
 class Server:
 
-    predict_controller: PredictController
+    classify_usecase: ClassifyUseCase
 
     def __init__(
         self,
-        predict_controller: PredictController,
+        classify_usecase: ClassifyUseCase,
     ):
-        self.predict_controller = predict_controller
+        self.classify_usecase = classify_usecase
         self.app = web.Application()
         self.app.add_routes([
             web.get("/", self.home),
@@ -31,4 +25,4 @@ class Server:
         return web.Response(text=text)
 
     async def recognize(self, request):
-        self.predict_controller.recognize()
+        self.classify_usecase.recognize()
