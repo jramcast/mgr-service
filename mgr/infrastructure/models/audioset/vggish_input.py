@@ -18,8 +18,8 @@
 import numpy as np
 import resampy
 
-from audiotagging.audioset.models import mel_features
-from audiotagging.audioset.models import vggish_params
+from . import mel_features
+from . import vggish_params
 
 import soundfile as sf
 

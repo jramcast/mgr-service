@@ -16,7 +16,6 @@ sudo apt-get install python3.7
 Or you can install [pyenv](https://github.com/pyenv/pyenv). A tool to easily switch between different python versions.
 This tool integrates with pipenv, so that any required Python version will be automatically downloaded when running ```pipenv install```.
 
-
 ### Donwload VGGish model files
 
 This model is necessary to convert raw audio files to AudioSet's 128-dimensional embeddings. Download these in `data/vggish`:
@@ -27,7 +26,6 @@ This model is necessary to convert raw audio files to AudioSet's 128-dimensional
   in NumPy compressed archive format.
 
 More information in [VGGish model README](https://github.com/tensorflow/models/tree/master/research/audioset/vggish).
-
 
 ### Run the service locally
 

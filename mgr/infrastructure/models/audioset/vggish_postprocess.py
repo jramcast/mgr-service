@@ -17,7 +17,7 @@
 
 import numpy as np
 
-from audiotagging.audioset.models import vggish_params
+from . import vggish_params
 
 
 class Postprocessor(object):

@@ -13,6 +13,10 @@ autopep8 = "*"
 
 [packages]
 flask = "*"
+numpy = "*"
+tensorflow = "==1.13.2"
+resampy = "*"
+soundfile = "*"
 
 [requires]
 python_version = "3.7"
