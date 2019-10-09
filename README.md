@@ -19,9 +19,7 @@ This tool integrates with pipenv, so that any required Python version will be au
 
 ### Donwload VGGish model files
 
-This model is necessary to convert raw audio files to AudioSet's 128-dimensional embeddings. Download these in `data/vggish`
-
-VGGish also requires downloading two data files:
+This model is necessary to convert raw audio files to AudioSet's 128-dimensional embeddings. Download these in `data/vggish`:
 
 * [VGGish model checkpoint](https://storage.googleapis.com/audioset/vggish_model.ckpt),
   in TensorFlow checkpoint format.
