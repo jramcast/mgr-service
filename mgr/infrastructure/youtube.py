@@ -23,6 +23,9 @@ def _get_audio_url(video):
 
 
 def _download_raw_audio(video, url):
+
+    print("DOWNLOADING AUDIO.")
+
     # Set output settings
     audio_codec = 'pcm_s16le'
     audio_container = 'wav'
@@ -30,36 +33,60 @@ def _download_raw_audio(video, url):
     # Get output video and audio filepaths
     base_path = './.tmp/'
 
+    basename_fmt = video.videoid
+    audio_filepath = os.path.join(
+        base_path, basename_fmt + '.' + audio_container
+    )
+
+    # Download the audio
+    audio_dl_args = ['ffmpeg',
+        '-ss', str(0),           # The beginning of the trim window
+        '-i', url,               # Specify the input video URL
+        '-t', str(video.length), # Specify the duration of the output
+        '-y',                    # Override file if exists
+        '-vn',                   # Suppress the video stream
+        '-ac', '2',              # Set the number of channels
+        '-sample_fmt', 's16',    # Specify the bit depth
+        '-acodec', audio_codec,  # Specify the output encoding
+        '-ar', '44100',          # Specify the audio sample rate
+        audio_filepath]
+
+    proc = sp.Popen(audio_dl_args, stdout=sp.PIPE, stderr=sp.PIPE)
+    stdout, stderr = proc.communicate()
+    if proc.returncode != 0:
+        print(stderr)
+    else:
+        print("Downloaded audio to " + audio_filepath)
+
+
     print("Video length seconds", video.length)
 
     SEGMENT_SECONDS = 10
-    for i in range(math.floor(video.length / SEGMENT_SECONDS)):
+    # for i in range(math.floor(video.length / SEGMENT_SECONDS)):
 
-        start = i * SEGMENT_SECONDS
-        end = start + SEGMENT_SECONDS
-        basename_fmt = "{}_{}_{}".format(video.videoid, start, end)
-        audio_filepath = os.path.join(base_path, basename_fmt + '.' + audio_container)
+    #     start = i * SEGMENT_SECONDS
+    #     end = start + SEGMENT_SECONDS
+    basename_segment_fmt = "{}_%03d".format(video.videoid)
+    segment_audio_filepath = os.path.join(
+        base_path, basename_segment_fmt + '.' + audio_container
+    )
 
-        # Download the audio
-        audio_dl_args = [
-            'ffmpeg',
-            '-ss', str(start),    # The beginning of the trim window
-            '-i', url,    # Specify the input video URL
-            '-t', str(SEGMENT_SECONDS),     # Specify the duration of the output
-            '-y',                    # Override file if exists
-            '-vn',                   # Suppress the video stream
-            '-ac', '2',              # Set the number of channels
-            '-sample_fmt', 's16',    # Specify the bit depth
-            '-acodec', audio_codec,  # Specify the output encoding
-            '-ar', '44100',          # Specify the audio sample rate
-            audio_filepath
-        ]
+    # Download the audio
+    audio_dl_args = [
+        'ffmpeg',
+        '-i', audio_filepath,       # Specify the input video URL
+        '-f', 'segment',            # Segment the file
+        '-y',                       # Override file if exists
+        '-segment_time', str(SEGMENT_SECONDS),    # Specify the segment duration
+        '-c', 'copy',  # Specify the output encoding
+        segment_audio_filepath
+    ]
 
-        proc = sp.Popen(audio_dl_args, stdout=sp.PIPE, stderr=sp.PIPE)
-        stdout, stderr = proc.communicate()
-        if proc.returncode != 0:
-            print(stderr)
-        else:
-            print("Downloaded audio to " + audio_filepath)
+    proc = sp.Popen(audio_dl_args, stdout=sp.PIPE, stderr=sp.PIPE)
+    stdout, stderr = proc.communicate()
+    if proc.returncode != 0:
+        print("ERROR", stderr)
+    else:
+        print("Splitted" + segment_audio_filepath)
 
-        yield audio_filepath
+    return basename_fmt
