@@ -8,9 +8,9 @@ from joblib import load
 
 
 def test_youtube_audio_donwload():
-    filename = youtube.download("https://www.youtube.com/watch?v=YuBeBjqKSGQ")
+    filename = youtube.download("https://www.youtube.com/watch?v=vabnZ9-ex7o")
 
-    sample = embeddings.extract(".tmp/{}_000.wav".format(filename))
+    sample = embeddings.extract(".tmp/{}_002.wav".format(filename))
     assert sample.shape == (10, 128)
 
     model = load("./mgr/infrastructure/models/bal_bayes.joblib")
