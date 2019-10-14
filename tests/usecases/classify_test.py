@@ -7,7 +7,7 @@ class TestDummy:
 
     def test_predict_returns_predictions(self):
         models = [FakeModel()]
-        usecase = ClassifyUseCase(models)
+        usecase = ClassifyUseCase(models, {})
 
         inputdata = "youtube.com/1234"
         result = usecase.run(inputdata)

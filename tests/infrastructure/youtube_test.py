@@ -8,6 +8,7 @@ from joblib import load
 
 
 def test_youtube_audio_donwload():
+    # Nirvana - Come As You Are
     filename = youtube.download("https://www.youtube.com/watch?v=vabnZ9-ex7o")
 
     sample = embeddings.extract(".tmp/{}_002.wav".format(filename))
@@ -20,6 +21,8 @@ def test_youtube_audio_donwload():
     result_probs = model.predict_proba(flattened_sample)
 
     predictions = []
+
+    # TODO: embed this in use case
     for i, prediction in enumerate(result[0]):
         if prediction == 1:
             predictions.append({
@@ -27,6 +30,8 @@ def test_youtube_audio_donwload():
                 "probability": result_probs[0][i]
             })
 
-    from pprint import pprint
-    pprint(predictions)
-    assert predictions == (1, 53)
+    assert len(predictions) > 0
+    genres = [prediction["genre"] for prediction in predictions]
+    assert "Grunge" in genres
+    assert "Rock music" in genres
+    assert "Rock and roll" in genres

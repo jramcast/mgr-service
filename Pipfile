@@ -19,6 +19,8 @@ resampy = "*"
 soundfile = "*"
 pafy = "*"
 youtube-dl = "*"
+joblib = "*"
+scikit-learn = "*"
 
 [requires]
 python_version = "3.7"
