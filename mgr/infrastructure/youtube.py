@@ -3,6 +3,17 @@ import pafy
 import subprocess as sp
 import os
 from scipy.io.wavfile import read
+from ..usecases.classify import AudioLoader
+from ..domain.entities import AudioClip
+
+
+class YoutubeAudioLoader(AudioLoader):
+
+    def load(self, uri) -> AudioClip:
+        video = pafy.new(uri)
+        audio_url = _get_audio_url(video)
+        return _download_raw_audio(video, audio_url)
+        return AudioClip(video.length)
 
 
 def download(video_page_url):

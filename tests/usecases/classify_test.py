@@ -1,25 +1,34 @@
 from mgr.usecases.interfaces import Model
-from mgr.usecases.classify import ClassifyUseCase
-from mgr.domain.entities import ClassificationResult, PredictedLabel
+from mgr.usecases.classify import ClassifyUseCase, AudioLoader
+from mgr.domain.entities import ClassificationResult, PredictedLabel, AudioClip
 
 
 class TestDummy:
 
     def test_predict_returns_predictions(self):
         models = [FakeModel()]
-        usecase = ClassifyUseCase(models, {})
+        usecase = ClassifyUseCase(models, FakeAudioLoader())
 
         inputdata = "youtube.com/1234"
         result = usecase.run(inputdata)
-        assert result == [
-            [{
+        assert result == {
+            "FakeModel": [{
                 "label": "ball",
                 "score": 0.84
             }]
-        ]
+        }
+
+
+class FakeAudioLoader(AudioLoader):
+
+    def load(self, uri):
+        return AudioClip(60)
 
 
 class FakeModel(Model):
+
+    def preprocess(self, clip: AudioClip):
+        return []
 
     def classify(self, data):
         return ClassificationResult(

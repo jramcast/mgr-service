@@ -1,10 +1,13 @@
+import numpy as np
+from joblib import load
 from mgr.infrastructure import youtube
 from mgr.infrastructure import embeddings
 from mgr.infrastructure.ontology import MUSIC_GENRE_CLASSES
 
 
-import numpy as np
-from joblib import load
+# TODO: limit video length
+# TODO: how to handle segments. Use all? How to average results?
+# TODO:
 
 
 def test_youtube_audio_donwload():

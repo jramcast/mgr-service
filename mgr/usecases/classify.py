@@ -1,30 +1,37 @@
-
+import abc
 from typing import List, Any
 from .interfaces import Model
-from ..domain.entities import ClassificationResult
+from ..domain.entities import ClassificationResult, AudioClip
+
+
+class AudioLoader(abc.ABC):
+
+    @abc.abstractmethod
+    def load(self, uri) -> AudioClip:
+        pass
 
 
 class ClassifyUseCase:
 
     models: List[Model]
 
-    def __init__(self, models: List[Model], audio_loader):
+    def __init__(self, models: List[Model], audio_loader: AudioLoader):
         self.models = models
-        # TODO: self.audio_loader = audio_loader
-        # TODO: self.preprocessor = preprocessor
+        self.audio_loader = audio_loader
 
-    def run(self, data) -> List[Any]:
-        # TODO: audio = self.audio_loader(audioid).load()
+    def run(self, uri) -> List[Any]:
+        clip = self.audio_loader.load(uri)
+        results = {}
 
-        # TODO: segment = audio.get_first_segment()
+        for model in self.models:
+            samples = model.preprocess(clip)
+            predictions = model.classify(samples)
+            results[model.name] = self.to_dict(predictions)
 
-        # TODO: embeddings = self.preprocessor.preprocess(segment)
+        return results
 
-        results = [model.classify(data) for model in self.models]
-        return [self.to_dict(result) for result in results]
-
-    def to_dict(self, result: ClassificationResult):
+    def to_dict(self, predictions: ClassificationResult):
         return [{
             "label": label.name,
             "score": label.score
-        } for label in result.labels]
+        } for label in predictions.labels]
