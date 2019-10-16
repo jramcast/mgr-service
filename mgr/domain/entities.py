@@ -5,14 +5,9 @@ from dataclasses import dataclass
 
 
 @dataclass
-class PredictedLabel:
-    name: str
+class ClassificationPrediction:
+    label: str
     score: float
-
-
-@dataclass
-class ClassificationResult:
-    labels: List[PredictedLabel]
 
 
 class ModelInputFeatures:

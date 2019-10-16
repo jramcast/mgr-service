@@ -1,5 +1,6 @@
 import abc
-from ..domain.entities import AudioClip
+from typing import List
+from ..domain.entities import AudioClip, ClassificationPrediction
 
 
 class Model(abc.ABC):
@@ -13,7 +14,7 @@ class Model(abc.ABC):
         raise NotImplementedError()
 
     @abc.abstractmethod
-    def classify(self):
+    def classify(self) -> List[ClassificationPrediction]:
         raise NotImplementedError()
 
 
