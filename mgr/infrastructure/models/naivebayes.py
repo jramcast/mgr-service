@@ -1,5 +1,6 @@
 from dataclasses import dataclass
-from ...domain.interfaces import Model
+from ...usecases.interfaces import Model
+from ...domain.entities import AudioClip
 
 
 @dataclass
@@ -9,5 +10,8 @@ class NaiveBayesInputFeatures():
 
 class NaiveBayesModel(Model):
 
-    def predict(self, features: NaiveBayesInputFeatures):
+    def preprocess(self, clip: AudioClip):
+        pass
+
+    def classify(self, features: NaiveBayesInputFeatures):
         return "Flamenco"

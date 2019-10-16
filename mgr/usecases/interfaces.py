@@ -15,3 +15,10 @@ class Model(abc.ABC):
     @abc.abstractmethod
     def classify(self):
         raise NotImplementedError()
+
+
+class AudioLoader(abc.ABC):
+
+    @abc.abstractmethod
+    def load(self, uri) -> AudioClip:
+        pass

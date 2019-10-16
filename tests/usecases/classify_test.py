@@ -1,5 +1,6 @@
 from mgr.usecases.interfaces import Model
-from mgr.usecases.classify import ClassifyUseCase, AudioLoader
+from mgr.usecases.classify import ClassifyUseCase
+from mgr.usecases.interfaces import AudioLoader
 from mgr.domain.entities import ClassificationResult, PredictedLabel, AudioClip
 
 
@@ -22,7 +23,7 @@ class TestDummy:
 class FakeAudioLoader(AudioLoader):
 
     def load(self, uri):
-        return AudioClip(60)
+        return AudioClip("test.wav", 60)
 
 
 class FakeModel(Model):

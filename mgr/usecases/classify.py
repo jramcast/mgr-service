@@ -1,14 +1,10 @@
 import abc
 from typing import List, Any
-from .interfaces import Model
+from .interfaces import Model, AudioLoader
 from ..domain.entities import ClassificationResult, AudioClip
 
 
-class AudioLoader(abc.ABC):
 
-    @abc.abstractmethod
-    def load(self, uri) -> AudioClip:
-        pass
 
 
 class ClassifyUseCase:

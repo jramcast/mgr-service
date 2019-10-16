@@ -1,9 +1,7 @@
-import math
-import pafy
-import subprocess as sp
 import os
-from scipy.io.wavfile import read
-from ..usecases.classify import AudioLoader
+import subprocess as sp
+import pafy
+from ..usecases.interfaces import AudioLoader
 from ..domain.entities import AudioClip
 
 
