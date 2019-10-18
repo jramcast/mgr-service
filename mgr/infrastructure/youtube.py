@@ -10,8 +10,8 @@ class YoutubeAudioLoader(AudioLoader):
     def load(self, uri) -> AudioClip:
         video = pafy.new(uri)
         audio_url = _get_audio_url(video)
-        return _download_raw_audio(video, audio_url)
-        return AudioClip(video.length)
+        filepath = _download_raw_audio(video, audio_url)
+        return AudioClip(filepath, video.length)
 
 
 def download(video_page_url):
@@ -48,17 +48,19 @@ def _download_raw_audio(video, url):
     )
 
     # Download the audio
-    audio_dl_args = ['ffmpeg',
-        '-ss', str(0),           # The beginning of the trim window
-        '-i', url,               # Specify the input video URL
-        '-t', str(video.length), # Specify the duration of the output
-        '-y',                    # Override file if exists
-        '-vn',                   # Suppress the video stream
-        '-ac', '2',              # Set the number of channels
-        '-sample_fmt', 's16',    # Specify the bit depth
-        '-acodec', audio_codec,  # Specify the output encoding
-        '-ar', '44100',          # Specify the audio sample rate
-        audio_filepath]
+    audio_dl_args = [
+        'ffmpeg',
+        '-ss', str(0),            # The beginning of the trim window
+        '-i', url,                # Specify the input video URL
+        '-t', str(video.length),  # Specify the duration of the output
+        '-y',                     # Override file if exists
+        '-vn',                    # Suppress the video stream
+        '-ac', '2',               # Set the number of channels
+        '-sample_fmt', 's16',     # Specify the bit depth
+        '-acodec', audio_codec,   # Specify the output encoding
+        '-ar', '44100',           # Specify the audio sample rate
+        audio_filepath
+    ]
 
     proc = sp.Popen(audio_dl_args, stdout=sp.PIPE, stderr=sp.PIPE)
     stdout, stderr = proc.communicate()
@@ -86,7 +88,7 @@ def _download_raw_audio(video, url):
         '-i', audio_filepath,       # Specify the input video URL
         '-f', 'segment',            # Segment the file
         '-y',                       # Override file if exists
-        '-segment_time', str(SEGMENT_SECONDS),    # Specify the segment duration
+        '-segment_time', str(SEGMENT_SECONDS),  # Specify the segment duration
         '-c', 'copy',  # Specify the output encoding
         segment_audio_filepath
     ]
@@ -98,4 +100,4 @@ def _download_raw_audio(video, url):
     else:
         print("Splitted" + segment_audio_filepath)
 
-    return basename_fmt
+    return audio_filepath

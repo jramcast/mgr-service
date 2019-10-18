@@ -14,7 +14,7 @@ class Model(abc.ABC):
         raise NotImplementedError()
 
     @abc.abstractmethod
-    def classify(self) -> List[Prediction]:
+    def classify(self) -> List[List[Prediction]]:
         raise NotImplementedError()
 
 

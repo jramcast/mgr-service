@@ -23,20 +23,28 @@ class NaiveBayesModel(Model):
         x = np.array(
             [embeddings.extract(segment.filename) for segment in clip.segments]
         )
-        return x.reshape(-1, 1280)
+        x = x.reshape(x.shape[0], 1280)
+        print("x shape", x.shape)
+        return x
+        # return x.reshape(-1, 1280)
 
     def classify(
         self, features: NaiveBayesInputFeatures
-    ) -> List[Prediction]:
+    ) -> List[List[Prediction]]:
         result = self.model.predict(features)
         result_probs = self.model.predict_proba(features)
 
+        print("SHAPE", result.shape)
+
         predictions = []
-        for i, prediction in enumerate(result[0]):
-            if prediction == 1:
-                predictions.append(Prediction(
-                    MUSIC_GENRE_CLASSES[i]["name"],
-                    result_probs[0][i]
-                ))
+        for i, record in enumerate(result):
+            segment_predictions = []
+            predictions.append(segment_predictions)
+            for j, prediction in enumerate(record):
+                if prediction == 1:
+                    segment_predictions.append(Prediction(
+                        MUSIC_GENRE_CLASSES[j]["name"],
+                        result_probs[i][j]
+                    ))
 
         return predictions

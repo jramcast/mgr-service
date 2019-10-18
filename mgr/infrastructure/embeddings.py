@@ -22,6 +22,8 @@ flags.DEFINE_string(
     'checkpoint', 'data/vggish/vggish_model.ckpt',
     'Path to the VGGish checkpoint file.')
 
+flags.DEFINE_string('host', '', 'Placeholder to ignore flask host parameter')
+
 FLAGS = flags.FLAGS
 
 

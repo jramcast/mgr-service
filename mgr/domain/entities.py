@@ -45,7 +45,7 @@ class AudioClip:
                 stop = self.length_seconds
 
             segment = AudioSegment(
-                self.get_segment_filename(start, stop),
+                self.get_segment_filename(i),
                 start,
                 stop
             )
@@ -53,6 +53,6 @@ class AudioClip:
 
         return segments
 
-    def get_segment_filename(self, start, stop):
+    def get_segment_filename(self, number) -> str:
         [root, extension] = os.path.splitext(self.filename)
-        return f"{root}_{start}_{stop}{extension}"
+        return "{}_{:03}{}".format(root, number, extension)

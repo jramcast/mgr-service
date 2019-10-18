@@ -1,21 +1,21 @@
 from flask import Flask
-from ...usecases.classify import ClassifyUseCase
 
 
 class Server:
 
-    predict_usecase: ClassifyUseCase
+    __slots__ = ["app", "route"]
 
-    def __init__(
-        self,
-        predict_usecase: ClassifyUseCase,
-    ):
-        self.predict_usecase = predict_usecase
+    def __init__(self):
+
         self.app = Flask(__name__)
+        self.route = self.app.route
 
         @self.app.route('/')
         def hello_world():
-            return self.predict_usecase.run()
+            return {
+                "info": "Service to predict music genre out of music clips",
+                "urls": ['%s' % rule for rule in self.app.url_map.iter_rules()]
+            }
 
     def serve(self):
         return self.app

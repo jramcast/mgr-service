@@ -22,5 +22,5 @@ class ClassifyUseCase:
 
         return results
 
-    def to_dict(self, predictions: List[Prediction]):
-        return [prediction.__dict__ for prediction in predictions]
+    def to_dict(self, predictions: List[List[Prediction]]):
+        return predictions

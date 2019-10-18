@@ -76,6 +76,3 @@ def get_entity_class_index(entity_id):
 
 NUM_TOTAL_CLASSES = 527
 MUSIC_GENRE_CLASSES = find_children('Music genre')
-
-from pprint import pprint
-pprint([(key, c['index'], c['name']) for (key, c) in enumerate(MUSIC_GENRE_CLASSES)])

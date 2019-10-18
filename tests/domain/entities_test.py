@@ -14,6 +14,6 @@ def test_audio_returns_correct_segments():
 
     clip = AudioClip("test.wav", length_seconds)
 
-    assert clip.segments[0] == AudioSegment("test_0_10.wav", 0, 10)
-    assert clip.segments[1] == AudioSegment("test_10_20.wav", 10, 20)
-    assert clip.segments[6] == AudioSegment("test_60_65.wav", 60, 65)
+    assert clip.segments[0] == AudioSegment("test_000.wav", 0, 10)
+    assert clip.segments[1] == AudioSegment("test_001.wav", 10, 20)
+    assert clip.segments[6] == AudioSegment("test_006.wav", 60, 65)

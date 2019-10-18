@@ -41,9 +41,6 @@ def waveform_to_examples(data, sample_rate):
       bands, where the frame length is vggish_params.STFT_HOP_LENGTH_SECONDS.
     """
 
-    print("Converting to examples")
-    print("Signal shape", data.shape)
-    print("Sample rate", sample_rate)
     # Convert to mono.
     if len(data.shape) > 1:
       data = np.mean(data, axis=1)
