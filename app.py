@@ -1,5 +1,5 @@
 from mgr.infrastructure.server.flask import Server
-from mgr.usecases.predict import ClassifyUseCase
+from mgr.usecases.classify import ClassifyUseCase
 from mgr.infrastructure.models.naivebayes import NaiveBayesModel
 
 

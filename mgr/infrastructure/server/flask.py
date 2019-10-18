@@ -1,5 +1,5 @@
 from flask import Flask
-from ...usecases.predict import ClassifyUseCase
+from ...usecases.classify import ClassifyUseCase
 
 
 class Server:
