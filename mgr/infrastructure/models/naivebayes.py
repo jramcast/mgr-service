@@ -3,7 +3,7 @@ import numpy as np
 from typing import List
 from dataclasses import dataclass
 from ...usecases.interfaces import Model
-from ...domain.entities import AudioClip, ClassificationPrediction
+from ...domain.entities import AudioClip, Prediction
 from .. import embeddings
 from ..ontology import MUSIC_GENRE_CLASSES
 
@@ -27,15 +27,16 @@ class NaiveBayesModel(Model):
 
     def classify(
         self, features: NaiveBayesInputFeatures
-    ) -> List[ClassificationPrediction]:
+    ) -> List[Prediction]:
         result = self.model.predict(features)
         result_probs = self.model.predict_proba(features)
 
         predictions = []
         for i, prediction in enumerate(result[0]):
             if prediction == 1:
-                predictions.append({
-                    "genre": MUSIC_GENRE_CLASSES[i]["name"],
-                    "probability": result_probs[0][i]
-                })
+                predictions.append(Prediction(
+                    MUSIC_GENRE_CLASSES[i]["name"],
+                    result_probs[0][i]
+                ))
+
         return predictions

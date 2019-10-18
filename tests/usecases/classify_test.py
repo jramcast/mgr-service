@@ -1,7 +1,7 @@
 from mgr.usecases.interfaces import Model
 from mgr.usecases.classify import ClassifyUseCase
 from mgr.usecases.interfaces import AudioLoader
-from mgr.domain.entities import (ClassificationPrediction, AudioClip)
+from mgr.domain.entities import (Prediction, AudioClip)
 
 
 def test_predict_returns_predictions():
@@ -30,4 +30,4 @@ class FakeModel(Model):
         return []
 
     def classify(self, data):
-        return [ClassificationPrediction("ball", 0.84)]
+        return [Prediction("ball", 0.84)]

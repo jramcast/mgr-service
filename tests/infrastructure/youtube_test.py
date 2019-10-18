@@ -10,7 +10,7 @@ from mgr.infrastructure.ontology import MUSIC_GENRE_CLASSES
 # TODO:
 
 
-def test_youtube_audio_donwload():
+def test_youtube_audio_download():
     # Nirvana - Come As You Are
     filename = youtube.download("https://www.youtube.com/watch?v=vabnZ9-ex7o")
 

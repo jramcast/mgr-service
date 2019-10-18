@@ -1,7 +1,6 @@
-import abc
 from typing import List, Any
 from .interfaces import Model, AudioLoader
-from ..domain.entities import ClassificationPrediction, AudioClip
+from ..domain.entities import Prediction
 
 
 class ClassifyUseCase:
@@ -23,8 +22,5 @@ class ClassifyUseCase:
 
         return results
 
-    def to_dict(self, predictions: ClassificationPrediction):
-        return [{
-            "label": label.name,
-            "score": label.score
-        } for label in predictions.labels]
+    def to_dict(self, predictions: List[Prediction]):
+        return [prediction.__dict__ for prediction in predictions]

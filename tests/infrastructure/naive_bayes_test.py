@@ -1,5 +1,5 @@
 from mgr.infrastructure.models.naivebayes import NaiveBayesModel
-from mgr.domain.entities import AudioClip
+from mgr.domain.entities import AudioClip, Prediction
 
 
 def test_naive_bayes_model():
@@ -7,6 +7,9 @@ def test_naive_bayes_model():
 
     clip = AudioClip("./tests/infrastructure/test.wav", 2)
     x = model.preprocess(clip)
-    result = model.classify(x)
+    predictions = model.classify(x)
 
-    assert result == ""
+    assert predictions == [
+        Prediction("Beatboxing", score=0.5691070272850726),
+        Prediction("Beatboxing", score=0.5691070272850726)
+    ]

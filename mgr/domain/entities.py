@@ -5,7 +5,7 @@ from dataclasses import dataclass
 
 
 @dataclass
-class ClassificationPrediction:
+class Prediction:
     label: str
     score: float
 
