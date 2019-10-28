@@ -10,6 +10,8 @@ def test_naive_bayes_model():
     predictions = model.classify(x)
 
     assert predictions == [
-        Prediction("Beatboxing", score=0.5691070272850726),
-        Prediction("Beatboxing", score=0.5691070272850726)
+        [
+            Prediction("Beatboxing", score=0.5691070272850726),
+            Prediction("Beatboxing", score=0.5691070272850726)
+        ]
     ]

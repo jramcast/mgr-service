@@ -23,4 +23,15 @@ class ClassifyUseCase:
         return results
 
     def to_dict(self, predictions: List[List[Prediction]]):
-        return predictions
+        formatted_segments = []
+        for segment in predictions:
+            formatted_segment = []
+            formatted_segments.append(formatted_segment)
+            for prediction in segment:
+                formatted_segment.append({
+                    "label": prediction.label,
+                    "score": prediction.score
+                })
+
+        return formatted_segments
+

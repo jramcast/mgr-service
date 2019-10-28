@@ -12,9 +12,11 @@ from mgr.infrastructure.ontology import MUSIC_GENRE_CLASSES
 
 def test_youtube_audio_download():
     # Nirvana - Come As You Are
-    filename = youtube.download("https://www.youtube.com/watch?v=vabnZ9-ex7o")
+    video_id = "vabnZ9-ex7o"
 
-    sample = embeddings.extract(".tmp/{}_002.wav".format(filename))
+    youtube.download("https://www.youtube.com/watch?v=" + video_id)
+
+    sample = embeddings.extract(".tmp/{}_002.wav".format(video_id))
     assert sample.shape == (10, 128)
 
     model = load("./mgr/infrastructure/models/bal_bayes.joblib")

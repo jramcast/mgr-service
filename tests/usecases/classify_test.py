@@ -10,12 +10,14 @@ def test_predict_returns_predictions():
 
     inputdata = "youtube.com/1234"
     result = usecase.run(inputdata)
-    assert result == {
-        "FakeModel": [{
-            "label": "ball",
-            "score": 0.84
-        }]
-    }
+    assert {
+        "FakeModel": [
+            [{
+                "label": "ball",
+                "score": 0.84
+            }]
+        ]
+    } == result
 
 
 class FakeAudioLoader(AudioLoader):
@@ -30,4 +32,4 @@ class FakeModel(Model):
         return []
 
     def classify(self, data):
-        return [Prediction("ball", 0.84)]
+        return [[Prediction("ball", 0.84)]]

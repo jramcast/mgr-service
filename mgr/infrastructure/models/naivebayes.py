@@ -20,6 +20,7 @@ class NaiveBayesModel(Model):
         self.model = joblib.load(model_file)
 
     def preprocess(self, clip: AudioClip):
+        # At this point, both the full clip and its segments are supossed to be downloaded
         x = np.array(
             [embeddings.extract(segment.filename) for segment in clip.segments]
         )
@@ -31,6 +32,11 @@ class NaiveBayesModel(Model):
     def classify(
         self, features: NaiveBayesInputFeatures
     ) -> List[List[Prediction]]:
+        """
+        Returns a list of list of predictions
+        The first list is the list of samples(segments)
+        The second list is the list of labels for each segment
+        """
         result = self.model.predict(features)
         result_probs = self.model.predict_proba(features)
 
