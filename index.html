@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title> DEMO</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.8.0/css/bulma.min.css">
+    <script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
+    <style>
+        html { 
+            background: url(https://images.unsplash.com/photo-1459233313842-cd392ee2c388?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1920&q=80) no-repeat center center fixed; 
+            -webkit-background-size: cover;
+            -moz-background-size: cover;
+            -o-background-size: cover;
+            background-size: cover;
+        }
+    </style>
+</head>
+
+<body>
+    <section class="section">
+        <div class="container">
+            <h1 class="title">
+                Music classification DEM
+            </h1>
+            <p class="subtitle">
+                Lallalala <strong>Bulmsdfsdfa</strong>!
+            </p>
+
+            <form id="clipForm" action="">
+                <input id="clipUri" type="text" placeholder="Youtube link or video id" value="vabnZ9-ex7o">
+                <input type="submit" value="Analyze">
+            </form>
+
+            <div id="clipPreview">
+
+            </div>
+
+            <div id="results">
+
+            </div>
+
+
+        </div>
+    </section>
+</body>
+
+<script>
+    const API_ENDPOINT = "http://localhost:5000/classify?clip=";
+
+    const form = document.getElementById("clipForm");
+    const clipUrlInput = document.getElementById("clipUri");
+    const clipPreviewContainer = document.getElementById("clipPreview");
+    const resultsContainer = document.getElementById("results");
+
+    form.addEventListener("submit", function onFormSubmittted(event) {
+
+        let videoURI = "https://www.youtube.com/embed/" +  clipUrlInput.value;
+
+        fetch(API_ENDPOINT + clipUrlInput.value)
+            .then(result => result.json())
+            .then(printResult);
+
+        clipPreviewContainer.insertAdjacentHTML(
+            "afterbegin",
+            '<iframe width="560" height="315" src="' + videoURI + '" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>');
+
+        event.preventDefault();
+    });
+
+    function printResult(predictions) {
+
+
+        const modelNames = Object.keys(predictions);
+
+        modelNames.forEach(function(key) {
+
+            resultsContainer.insertAdjacentHTML(
+                "beforeend",
+                "<h2>" + key +"</h2>"
+            );
+            resultsContainer.insertAdjacentHTML(
+                "beforeend",
+                "<div>" + JSON.stringify(modelNames[key]) +"</div>"
+            );
+        });
+
+        resultsContainer.insertAdjacentHTML(
+            "afterbegin",
+            predictions
+        )
+    }
+
+
+</script>
+
+</html>

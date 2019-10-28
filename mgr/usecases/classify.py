@@ -34,4 +34,3 @@ class ClassifyUseCase:
                 })
 
         return formatted_segments
-
