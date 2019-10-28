@@ -48,12 +48,71 @@
 
             </div>
 
+            <canvas id="myChart" width="400" height="400"></canvas>
 
         </div>
     </section>
 </body>
 
+<script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.1/dist/Chart.min.js"></script>
 <script>
+
+    var labels = [
+        "Pop music",
+        "Hip hop music",
+        "Beatboxing",
+        "Rock music",
+        "Heavy metal",
+        "Punk rock",
+        "Grunge",
+        "Progressive rock",
+        "Rock and roll",
+        "Psychedelic rock",
+        "Rhythm and blues",
+        "Soul music",
+        "Reggae",
+        "Country",
+        "Swing music",
+        "Bluegrass",
+        "Funk",
+        "Folk music",
+        "Middle Eastern music",
+        "Jazz",
+        "Disco",
+        "Classical music",
+        "Opera",
+        "Electronic music",
+        "House music",
+        "Techno",
+        "Dubstep",
+        "Drum and bass",
+        "Electronica",
+        "Electronic dance music",
+        "Ambient music",
+        "Trance music",
+        "Music of Latin America",
+        "Salsa music",
+        "Flamenco",
+        "Blues",
+        "Music for children",
+        "New-age music",
+        "Vocal music",
+        "A capella",
+        "Chant",
+        "Mantra",
+        "Beatboxing",
+        "Music of Africa",
+        "Afrobeat",
+        "Christian music",
+        "Gospel music",
+        "Music of Asia",
+        "Carnatic music",
+        "Music of Bollywood",
+        "Ska",
+        "Traditional music",
+        "Independent music",
+    ];
+
     const API_ENDPOINT = "http://localhost:5000/segment/classify?clip=";
 
     const form = document.getElementById("clipForm");
@@ -61,9 +120,10 @@
     const clipPreviewContainer = document.getElementById("clipPreview");
     const resultsContainer = document.getElementById("results");
 
+    const chart = createChart();
+
     form.addEventListener("submit", function onFormSubmittted(event) {
-        fetchNextSegment(clipUrlInput.value, 1)
-            .then(printResult);
+        fetchNextSegment(clipUrlInput.value, 1);
 
         let videoURI = "https://www.youtube.com/embed/" + clipUrlInput.value + "?rel=0&autoplay=0&mute=1";
         clipPreviewContainer.insertAdjacentHTML(
@@ -81,35 +141,83 @@
                 if (result.nextSegment) {
                     fetchNextSegment(videoURI, result.nextSegment)
                 }
-                return result;
+                return result.results;
             })
-            .then(printResult);
-
+            .then(printResults);
     }
 
 
 
-    function printResult(predictions) {
+    function printResults(predictions) {
         const modelNames = Object.keys(predictions);
 
         modelNames.forEach(function (key) {
-
-            resultsContainer.insertAdjacentHTML(
-                "beforeend",
-                "<h2>" + key + "</h2>"
-            );
-            resultsContainer.insertAdjacentHTML(
-                "beforeend",
-                "<div>" + JSON.stringify(predictions[key]) + "</div>"
-            );
+            updateChart(chart, predictions[key][0]);
         });
-
-        resultsContainer.insertAdjacentHTML(
-            "afterbegin",
-            predictions
-        )
     }
 
+
+
+    function updateChart(chart, predictions) {
+        predictions.forEach(function (prediction) {
+            var index = labels.findIndex(function (each) {
+                return each === prediction.label;
+            });
+            chart.data.datasets[0].data[index] = prediction.score;
+        });
+
+        chart.update();
+    }
+
+
+    function createChart() {
+
+        const data = [];
+        labels.forEach(function (label) {
+            data.push(0);
+        });
+
+        var ctx = document.getElementById('myChart').getContext('2d');
+        var myChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Score',
+                    data: data,
+                    // backgroundColor: [
+                    //     'rgba(255, 99, 132, 0.2)',
+                    //     'rgba(54, 162, 235, 0.2)',
+                    //     'rgba(255, 206, 86, 0.2)',
+                    //     'rgba(75, 192, 192, 0.2)',
+                    //     'rgba(153, 102, 255, 0.2)',
+                    //     'rgba(255, 159, 64, 0.2)'
+                    // ],
+                    // borderColor: [
+                    //     'rgba(255, 99, 132, 1)',
+                    //     'rgba(54, 162, 235, 1)',
+                    //     'rgba(255, 206, 86, 1)',
+                    //     'rgba(75, 192, 192, 1)',
+                    //     'rgba(153, 102, 255, 1)',
+                    //     'rgba(255, 159, 64, 1)'
+                    // ],
+                    // borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    yAxes: [{
+                        ticks: {
+                            beginAtZero: true
+                        }
+                    }]
+                }
+            }
+        });
+
+        return myChart;
+
+    }
 
 </script>
 
