@@ -8,8 +8,8 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.8.0/css/bulma.min.css">
     <script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
     <style>
-        html { 
-            background: url(https://images.unsplash.com/photo-1459233313842-cd392ee2c388?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1920&q=80) no-repeat center center fixed; 
+        html {
+            background: url(https://images.unsplash.com/photo-1459233313842-cd392ee2c388?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1920&q=80) no-repeat center center fixed;
             -webkit-background-size: cover;
             -moz-background-size: cover;
             -o-background-size: cover;
@@ -22,15 +22,22 @@
     <section class="section">
         <div class="container">
             <h1 class="title">
-                Music classification DEM
+                Music classification DEMO
             </h1>
             <p class="subtitle">
                 Lallalala <strong>Bulmsdfsdfa</strong>!
             </p>
 
             <form id="clipForm" action="">
-                <input id="clipUri" type="text" placeholder="Youtube link or video id" value="vabnZ9-ex7o">
-                <input type="submit" value="Analyze">
+                <div class="field has-addons">
+                    <div class="control">
+                        <input id="clipUri" class="input is-large" type="text" placeholder="Youtube link or video id"
+                            value="vabnZ9-ex7o">
+                    </div>
+                    <div class="control">
+                        <input class="button is-info is-large" type="submit" value="Analyze">
+                    </div>
+                </div>
             </form>
 
             <div id="clipPreview">
@@ -55,12 +62,10 @@
     const resultsContainer = document.getElementById("results");
 
     form.addEventListener("submit", function onFormSubmittted(event) {
-
-        let videoURI = "https://www.youtube.com/embed/" +  clipUrlInput.value;
-
         fetchNextSegment(clipUrlInput.value, 1)
             .then(printResult);
 
+        let videoURI = "https://www.youtube.com/embed/" + clipUrlInput.value + "?rel=0&autoplay=0&mute=1";
         clipPreviewContainer.insertAdjacentHTML(
             "afterbegin",
             '<iframe width="560" height="315" src="' + videoURI + '" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>');
@@ -72,7 +77,7 @@
     function fetchNextSegment(videoURI, segmentIndex) {
         return fetch(API_ENDPOINT + videoURI + "&segment=" + segmentIndex)
             .then(result => result.json())
-            .then(function(result) {
+            .then(function (result) {
                 if (result.nextSegment) {
                     fetchNextSegment(videoURI, result.nextSegment)
                 }
@@ -87,15 +92,15 @@
     function printResult(predictions) {
         const modelNames = Object.keys(predictions);
 
-        modelNames.forEach(function(key) {
+        modelNames.forEach(function (key) {
 
             resultsContainer.insertAdjacentHTML(
                 "beforeend",
-                "<h2>" + key +"</h2>"
+                "<h2>" + key + "</h2>"
             );
             resultsContainer.insertAdjacentHTML(
                 "beforeend",
-                "<div>" + JSON.stringify(predictions[key]) +"</div>"
+                "<div>" + JSON.stringify(predictions[key]) + "</div>"
             );
         });
 
