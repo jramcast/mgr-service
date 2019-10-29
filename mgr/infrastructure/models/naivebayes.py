@@ -3,7 +3,7 @@ import numpy as np
 from typing import List
 from dataclasses import dataclass
 from ...usecases.interfaces import Model
-from ...domain.entities import AudioClip, Prediction
+from ...domain.entities import Prediction, AudioSegment
 from .. import embeddings
 from ..ontology import MUSIC_GENRE_CLASSES
 
@@ -19,10 +19,10 @@ class NaiveBayesModel(Model):
         model_file = "./mgr/infrastructure/models/bal_bayes.joblib"
         self.model = joblib.load(model_file)
 
-    def preprocess(self, clip: AudioClip):
+    def preprocess(self, segments: List[AudioSegment]):
         # At this point, both the full clip and its segments are supossed to be downloaded
         x = np.array(
-            [embeddings.extract(segment.filename) for segment in clip.segments]
+            [embeddings.extract(segment.filename) for segment in segments]
         )
         x = x.reshape(x.shape[0], 1280)
         print("x shape", x.shape)
