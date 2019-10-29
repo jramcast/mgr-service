@@ -8,13 +8,13 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.8.0/css/bulma.min.css">
     <script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
     <style>
-        html {
+        /*html {
             background: url(https://images.unsplash.com/photo-1459233313842-cd392ee2c388?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1920&q=80) no-repeat center center fixed;
             -webkit-background-size: cover;
             -moz-background-size: cover;
             -o-background-size: cover;
             background-size: cover;
-        }
+        }*/
     </style>
 </head>
 
@@ -48,7 +48,7 @@
 
             </div>
 
-            <canvas id="myChart" width="400" height="400"></canvas>
+            <canvas id="myChart" width="400" height="200"></canvas>
 
         </div>
     </section>
@@ -113,6 +113,8 @@
         "Independent music",
     ];
 
+    const barColors = labels.map(getRandomColor);
+
     const API_ENDPOINT = "http://localhost:5000/segment/classify?clip=";
 
     const form = document.getElementById("clipForm");
@@ -159,6 +161,9 @@
 
 
     function updateChart(chart, predictions) {
+
+        chart.data.datasets[0].data = createDataOfZeros();
+
         predictions.forEach(function (prediction) {
             var index = labels.findIndex(function (each) {
                 return each === prediction.label;
@@ -169,13 +174,18 @@
         chart.update();
     }
 
-
-    function createChart() {
-
+    function createDataOfZeros() {
         const data = [];
         labels.forEach(function (label) {
             data.push(0);
         });
+        return data
+    }
+
+
+    function createChart() {
+
+        const data = createDataOfZeros();
 
         var ctx = document.getElementById('myChart').getContext('2d');
         var myChart = new Chart(ctx, {
@@ -185,6 +195,7 @@
                 datasets: [{
                     label: 'Score',
                     data: data,
+                    backgroundColor: barColors
                     // backgroundColor: [
                     //     'rgba(255, 99, 132, 0.2)',
                     //     'rgba(54, 162, 235, 0.2)',
@@ -217,6 +228,16 @@
 
         return myChart;
 
+    }
+
+
+    function getRandomColor() {
+        var letters = '0123456789ABCDEF'.split('');
+        var color = '#';
+        for (var i = 0; i < 6; i++ ) {
+            color += letters[Math.floor(Math.random() * 16)];
+        }
+        return color;
     }
 
 </script>
