@@ -40,9 +40,7 @@
                 </div>
             </form>
 
-            <div id="clipPreview">
-
-            </div>
+            <div style="position: fixed; z-index: -99; width: 100%; height: 100%; top: 0; left: 0" id="player"></div>
 
             <div id="results">
 
@@ -124,13 +122,47 @@
 
     const chart = createChart();
 
+
+    // This code loads the IFrame Player API code asynchronously.
+    var tag = document.createElement('script');
+    tag.src = "https://www.youtube.com/iframe_api";
+    var firstScriptTag = document.getElementsByTagName('script')[0];
+    firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+
+    // 3. This function creates an <iframe> (and YouTube player)
+    //    after the API code downloads.
+    var player;
+    var youtubePlayerReady = false;
+    function onYouTubeIframeAPIReady() {
+        youtubePlayerReady = true;
+    }
+
+
+
+
     form.addEventListener("submit", function onFormSubmittted(event) {
         fetchNextSegment(clipUrlInput.value, 1);
 
-        let videoURI = "https://www.youtube.com/embed/" + clipUrlInput.value + "?rel=0&autoplay=0&mute=1";
-        clipPreviewContainer.insertAdjacentHTML(
-            "afterbegin",
-            '<iframe width="560" height="315" src="' + videoURI + '" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>');
+        if (!youtubePlayerReady) {
+            alert("Player not ready");
+            return false;
+        }
+
+        player = new YT.Player('player', {
+            height: '360',
+            width: '640',
+            videoId: clipUrlInput.value,
+            events: {
+                'onReady': onPlayerReady,
+                'onStateChange': onPlayerStateChange
+            }
+        });
+
+        // let videoURI = "https://www.youtube.com/embed/" + clipUrlInput.value + "?rel=0&autoplay=0&mute=1";
+        // clipPreviewContainer.insertAdjacentHTML(
+        //     "afterbegin",
+        //     '<iframe width="560" height="315" src="' + videoURI + '" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>');
 
         event.preventDefault();
     });
@@ -234,10 +266,28 @@
     function getRandomColor() {
         var letters = '0123456789ABCDEF'.split('');
         var color = '#';
-        for (var i = 0; i < 6; i++ ) {
+        for (var i = 0; i < 6; i++) {
             color += letters[Math.floor(Math.random() * 16)];
         }
         return color;
+    }
+
+    // 4. The API will call this function when the video player is ready.
+    function onPlayerReady(event) {
+        event.target.playVideo();
+        event.target.unMute();
+    }
+
+    function onPlayerStateChange(event) {
+        var interval;
+        if (event.data == YT.PlayerState.PLAYING) {
+            interval = setInterval(getCurrentTime, 1000);
+        } else {
+            clearInterval(interval);
+        }
+    }
+    function getCurrentTime() {
+        console.log(player.getCurrentTime());
     }
 
 </script>

@@ -8,7 +8,7 @@ class Server:
 
     def __init__(self):
 
-        self.app = Flask(__name__)
+        self.app = Flask(__name__, static_folder='/home/jaime/Desarrollo/phd/mgr-service/static',)
         CORS(self.app)
         self.route = self.app.route
 
