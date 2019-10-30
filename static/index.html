@@ -17,11 +17,36 @@
         }*/
 
         .translucid {
-            background: rgba(10, 10, 10, 0.3);
             padding: 0;
-            height: 90%;
+            height: calc(100% - 40px);
             position: absolute;
             width: 100%;
+
+            background: rgba(0,0,0,0.3);
+            background: -moz-linear-gradient(top, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.3) 82%, rgba(0,0,0,0) 100%);
+            background: -webkit-gradient(left top, left bottom, color-stop(0%, rgba(0,0,0,0.3)), color-stop(82%, rgba(0,0,0,0.3)), color-stop(100%, rgba(0,0,0,0)));
+            background: -webkit-linear-gradient(top, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.3) 82%, rgba(0,0,0,0) 100%);
+            background: -o-linear-gradient(top, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.3) 82%, rgba(0,0,0,0) 100%);
+            background: -ms-linear-gradient(top, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.3) 82%, rgba(0,0,0,0) 100%);
+            background: linear-gradient(to bottom, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.3) 82%, rgba(0,0,0,0) 100%);
+            filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#000000', endColorstr='#000000', GradientType=0 );
+        }
+
+        .title {
+            margin: 10% 0;
+        }
+
+        #clipUri {
+            background: rgba(255, 255, 255, 0.2);
+            color: #ffffff;
+        }
+
+        body, html {
+            background-color: #333333;
+        }
+
+        .field {
+            padding: 1rem 0 2rem;
         }
     </style>
 </head>
@@ -29,30 +54,43 @@
 <body>
     <section class="section translucid">
         <div class="container">
-            <h1 class="title">
-                Music classification DEMO
+
+
+
+            <h1 class="title has-text-light">
+                DEMO
             </h1>
-            <p class="subtitle">
-                Lallalala <strong>Bulmsdfsdfa</strong>!
+            <p class="has-text-light">
+                Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the
+                industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and
+                scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap
+                into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the
+                release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing
+                software like Aldus PageMaker including versions of Lorem Ipsum
             </p>
 
+
+
+
             <form id="clipForm" action="">
+
                 <div class="field has-addons">
                     <div class="control">
-                        <input id="clipUri" class="input is-large" type="text" placeholder="Youtube link or video id"
+                        <input id="clipUri" class="input is-medium" type="text" placeholder="Youtube link or video id"
                             value="vabnZ9-ex7o">
                     </div>
                     <div class="control">
-                        <input class="button is-info is-large" type="submit" value="Analyze">
+                        <input class="button is-outlined is-medium" type="submit" value="Analyze">
                     </div>
                 </div>
+
             </form>
 
             <div style="position: fixed; z-index: -99; width: 100%; height: 100%; top: 0; left: 0" id="player"></div>
 
             <div id="results"></div>
 
-            <canvas id="myChart" width="400" height="150"></canvas>
+            <canvas id="myChart" height="100"></canvas>
 
         </div>
     </section>
@@ -249,7 +287,7 @@
                 datasets: [{
                     label: '',
                     data: data,
-                    backgroundColor: barColors
+                    backgroundColor: "rgba(255, 255, 255, 0.43)", // barColors
                     // backgroundColor: [
                     //     'rgba(255, 99, 132, 0.2)',
                     //     'rgba(54, 162, 235, 0.2)',
@@ -276,11 +314,13 @@
                 scales: {
                     yAxes: [{
                         ticks: {
-                            beginAtZero: true
+                            beginAtZero: true,
+                            display: false
                         },
                         gridLines: {
                             display: false
-                        }
+                        },
+
                     }],
                     xAxes: [{
                         gridLines: {
