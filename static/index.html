@@ -18,8 +18,11 @@
 
         .translucid {
             background: rgba(10, 10, 10, 0.3);
+            padding: 0;
+            height: 90%;
+            position: absolute;
+            width: 100%;
         }
-
     </style>
 </head>
 
@@ -244,7 +247,7 @@
             data: {
                 labels: labels,
                 datasets: [{
-                    label: 'Score',
+                    label: '',
                     data: data,
                     backgroundColor: barColors
                     // backgroundColor: [
@@ -267,12 +270,23 @@
                 }]
             },
             options: {
+                legend: {
+                    display: false
+                },
                 scales: {
                     yAxes: [{
                         ticks: {
                             beginAtZero: true
+                        },
+                        gridLines: {
+                            display: false
                         }
-                    }]
+                    }],
+                    xAxes: [{
+                        gridLines: {
+                            display: false
+                        }
+                    }],
                 }
             }
         });
@@ -311,7 +325,7 @@
         if (!fetchingSegment) {
             fetchingSegment = true;
             fetchSegmentFromSecond(clipUrlInput.value, second)
-                .then(function() {
+                .then(function () {
                     fetchingSegment = false;
                 })
         }

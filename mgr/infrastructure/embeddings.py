@@ -23,6 +23,7 @@ flags.DEFINE_string(
     'Path to the VGGish checkpoint file.')
 
 flags.DEFINE_string('host', '', 'Placeholder to ignore flask host parameter')
+flags.DEFINE_string('cert', '', 'Placeholder to ignore flask cert parameter')
 
 FLAGS = flags.FLAGS
 
