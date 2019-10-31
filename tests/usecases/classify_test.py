@@ -5,11 +5,13 @@ from mgr.domain.entities import (Prediction, AudioClip, AudioSegment)
 
 
 def test_predict_returns_predictions():
-    models = [FakeModel()]
+    models = {
+        "fakeModel": FakeModel()
+    }
     usecase = ClassifyUseCase(models, FakeAudioLoader())
 
     inputdata = "youtube.com/1234"
-    result = usecase.run(inputdata)
+    result = usecase.run(inputdata, model_id="fakeModel")
     assert {
         "FakeModel": [
             [{

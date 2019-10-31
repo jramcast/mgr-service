@@ -22,6 +22,7 @@ youtube-dl = "*"
 joblib = "*"
 scikit-learn = "==0.20.1"
 flask-cors = "*"
+keras = "==2.2.4"
 
 [requires]
 python_version = "3.7"

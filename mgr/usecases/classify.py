@@ -1,4 +1,4 @@
-from typing import List, Any
+from typing import List, Any, Dict
 from .interfaces import Model, AudioLoader
 from ..domain.entities import Prediction
 
@@ -7,18 +7,18 @@ class ClassifyUseCase:
 
     models: List[Model]
 
-    def __init__(self, models: List[Model], audio_loader: AudioLoader):
+    def __init__(self, models: Dict[str, Model], audio_loader: AudioLoader):
         self.models = models
         self.audio_loader = audio_loader
 
-    def run(self, uri) -> List[Any]:
+    def run(self, uri, model_id) -> List[Any]:
         clip = self.audio_loader.load(uri)
         results = {}
 
-        for model in self.models:
-            samples = model.preprocess(clip.segments)
-            predictions = model.classify(samples)
-            results[model.name] = self.to_dict(predictions)
+        model = self.models[model_id]
+        samples = model.preprocess(clip.segments)
+        predictions = model.classify(samples)
+        results[model.name] = self.to_dict(predictions)
 
         return results
 
