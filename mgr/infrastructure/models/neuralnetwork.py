@@ -23,19 +23,14 @@ class NeuralNetworkModel(Model):
         outputs = self._define_layers(inputs)
         self.model = KerasModel(inputs=inputs, outputs=outputs)
         self.model.load_weights(model_file)
-        self.model.compile(
-            optimizer=keras.optimizers.Adam(lr=1e-3),
-            loss='binary_crossentropy'
-        )
 
     def preprocess(self, segments: List[AudioSegment]):
-        # At this point, both the full clip and its segments are supossed to be downloaded
+        # At this point, both the full clip and its segments
+        # are supossed to be downloaded
         x = np.array(
             [embeddings.extract(segment.filename) for segment in segments]
         )
-        print("x shape", x.shape)
         return x
-        # return x.reshape(-1, 1280)
 
     def classify(
         self, features: np.ndarray
@@ -74,5 +69,5 @@ class NeuralNetworkModel(Model):
         l2 = Dropout(self.drop_rate)(l2)
 
         classes_num = len(MUSIC_GENRE_CLASSES)
-        result_layer = Dense(classes_num, activation='sigmoid')(l2)
-        return result_layer
+        output_layer = Dense(classes_num, activation='sigmoid')(l2)
+        return output_layer
