@@ -1,7 +1,7 @@
 from mgr.usecases.interfaces import Model
 from mgr.usecases.classify import ClassifyUseCase
 from mgr.usecases.interfaces import AudioLoader
-from mgr.domain.entities import (Prediction, AudioClip)
+from mgr.domain.entities import (Prediction, AudioClip, AudioSegment)
 
 
 def test_predict_returns_predictions():
@@ -24,6 +24,9 @@ class FakeAudioLoader(AudioLoader):
 
     def load(self, uri):
         return AudioClip("test.wav", 60)
+
+    def load_segment(self, uri):
+        return AudioSegment("test_000.wav", start=0, stop=10)
 
 
 class FakeModel(Model):

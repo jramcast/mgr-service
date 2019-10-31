@@ -6,7 +6,7 @@ def test_naive_bayes_model():
     model = NaiveBayesModel()
 
     clip = AudioClip("./tests/infrastructure/test.wav", 2)
-    x = model.preprocess(clip)
+    x = model.preprocess(clip.segments)
     predictions = model.classify(x)
 
     assert predictions == [
