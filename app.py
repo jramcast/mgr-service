@@ -1,14 +1,18 @@
 from mgr.infrastructure.server.flask import Server
-from mgr.usecases.classify import ClassifyUseCase, ClassifySegmentUseCase, ClassifySegmentFromSecondUseCase
+from mgr.usecases.classify import (
+    ClassifyUseCase, ClassifySegmentUseCase, ClassifySegmentFromSecondUseCase
+)
 from mgr.infrastructure.models.naivebayes import NaiveBayesModel
+from mgr.infrastructure.models.neuralnetwork import NeuralNetworkModel
 from mgr.infrastructure.youtube import YoutubeAudioLoader
 from flask import request
 
 
-# List of models to classify
-models = [
-    NaiveBayesModel()
-]
+# Models to classify
+models = {
+    "naive_bayes": NaiveBayesModel(),
+    "neural_network": NeuralNetworkModel()
+}
 
 # Audio downloader
 audio_downloader = YoutubeAudioLoader()
@@ -34,12 +38,14 @@ def route_segment_classify():
     if "from" in request.args:
         return classify_segment_fromseconds.run(
             request.args["clip"],
-            round(float(request.args["from"]))
+            round(float(request.args["from"])),
+            request.args["model"]
         )
 
     return classify_segment.run(
         request.args["clip"],
-        int(request.args["segment"])
+        int(request.args["segment"]),
+        request.args["model"]
     )
 
 

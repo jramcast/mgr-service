@@ -91,18 +91,20 @@ class ClassifySegmentFromSecondUseCase:
 
     models: List[Model]
 
-    def __init__(self, models: List[Model], audio_loader: AudioLoader):
+    def __init__(self, models: Dict[str, Model], audio_loader: AudioLoader):
         self.models = models
         self.audio_loader = audio_loader
 
-    def run(self, uri, from_second: int) -> List[Any]:
+    def run(self, uri, from_second: int, model_name: str) -> List[Any]:
         segment = self.audio_loader.load_segment(uri, from_second)
         results = {}
 
-        for model in self.models:
-            samples = model.preprocess([segment])
-            predictions = model.classify(samples)
-            results[model.name] = self.to_dict(predictions)
+        model = self.models[model_name]
+        print("Using model", model)
+
+        samples = model.preprocess([segment])
+        predictions = model.classify(samples)
+        results[model.name] = self.to_dict(predictions)
 
         return {
             "results": results,
@@ -117,7 +119,7 @@ class ClassifySegmentFromSecondUseCase:
             for prediction in segment:
                 formatted_segment.append({
                     "label": prediction.label,
-                    "score": prediction.score
+                    "score": float(prediction.score)
                 })
 
         return formatted_segments

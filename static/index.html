@@ -81,8 +81,8 @@
                     </div>
                     <div class="control">
                         <div class="select is-medium">
-                            <select>
-                              <option value="neural_network">Neural Network</option>
+                            <select id="modelSelector" name="model">
+                              <option value="neural_network" selected="selected">Neural Network</option>
                               <option value="naive_bayes">Naive Bayes</option>
                             </select>
                           </div>
@@ -169,6 +169,7 @@
 
     const form = document.getElementById("clipForm");
     const clipUrlInput = document.getElementById("clipUri");
+    const modelSelector = document.getElementById("modelSelector");
     const clipPreviewContainer = document.getElementById("clipPreview");
     const resultsContainer = document.getElementById("results");
     var fetchInterval;
@@ -242,7 +243,7 @@
     }
 
     function fetchSegmentFromSecond(videoURI, second) {
-        return fetch(API_ENDPOINT + videoURI + "&from=" + second)
+        return fetch(API_ENDPOINT + videoURI + "&from=" + second + "&model=" + modelSelector.value)
             .then(result => result.json())
             .then(result => result.results)
             .then(showResults);
@@ -323,7 +324,9 @@
                     yAxes: [{
                         ticks: {
                             beginAtZero: true,
-                            display: false
+                            display: true,
+                            min: 0,
+                            max: 1
                         },
                         gridLines: {
                             display: false
