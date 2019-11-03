@@ -37,20 +37,16 @@ class NaiveBayesModel(Model):
         The first list is the list of samples(segments)
         The second list is the list of labels for each segment
         """
-        result = self.model.predict(features)
-        result_probs = self.model.predict_proba(features)
-
-        print("SHAPE", result.shape)
+        result = self.model.predict_proba(features)
 
         predictions = []
         for i, record in enumerate(result):
             segment_predictions = []
             predictions.append(segment_predictions)
             for j, prediction in enumerate(record):
-                if prediction == 1:
-                    segment_predictions.append(Prediction(
-                        MUSIC_GENRE_CLASSES[j]["name"],
-                        result_probs[i][j]
-                    ))
+                segment_predictions.append(Prediction(
+                    MUSIC_GENRE_CLASSES[j]["name"],
+                    result[i][j]
+                ))
 
         return predictions

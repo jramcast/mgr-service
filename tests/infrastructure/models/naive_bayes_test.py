@@ -1,5 +1,5 @@
 from mgr.infrastructure.models.naivebayes import NaiveBayesModel
-from mgr.domain.entities import AudioClip, Prediction
+from mgr.domain.entities import AudioClip
 
 
 def test_naive_bayes_model():
@@ -9,9 +9,7 @@ def test_naive_bayes_model():
     x = model.preprocess(clip.segments)
     predictions = model.classify(x)
 
-    assert predictions == [
-        [
-            Prediction("Beatboxing", score=0.5691070272850726),
-            Prediction("Beatboxing", score=0.5691070272850726)
-        ]
-    ]
+    predictions[0].sort(key=lambda each: -each.score)
+
+    assert predictions[0][0].label == "Beatboxing"
+
