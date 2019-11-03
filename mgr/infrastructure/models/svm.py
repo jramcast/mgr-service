@@ -8,20 +8,14 @@ from .. import embeddings
 from ..ontology import MUSIC_GENRE_CLASSES
 
 
-@dataclass
-class NaiveBayesInputFeatures():
-    pass
-
-
-class NaiveBayesModel(Model):
+class SVMModel(Model):
 
     def __init__(self):
-        model_file = "./mgr/infrastructure/models/bal_bayes.joblib"
+        model_file = "./mgr/infrastructure/models/bal_svm.joblib"
         self.model = joblib.load(model_file)
 
     def preprocess(self, segments: List[AudioSegment]):
-        # At this point, both the full clip and
-        # its segments are supossed to be downloaded
+        # At this point, both the full clip and its segments are supossed to be downloaded
         x = np.array(
             [embeddings.extract(segment.filename) for segment in segments]
         )
@@ -31,14 +25,14 @@ class NaiveBayesModel(Model):
         # return x.reshape(-1, 1280)
 
     def classify(
-        self, features: NaiveBayesInputFeatures
+        self, features: np.ndarray
     ) -> List[List[Prediction]]:
         """
         Returns a list of list of predictions
         The first list is the list of samples(segments)
         The second list is the list of labels for each segment
         """
-        result = self.model.predict_proba(features)
+        result = self.model.decision_function(features)
 
         predictions = []
         for i, record in enumerate(result):

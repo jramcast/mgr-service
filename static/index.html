@@ -22,13 +22,13 @@
             position: absolute;
             width: 100%;
 
-            background: rgba(0,0,0,0.3);
-            background: -moz-linear-gradient(top, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.3) 82%, rgba(0,0,0,0) 100%);
-            background: -webkit-gradient(left top, left bottom, color-stop(0%, rgba(0,0,0,0.3)), color-stop(82%, rgba(0,0,0,0.3)), color-stop(100%, rgba(0,0,0,0)));
-            background: -webkit-linear-gradient(top, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.3) 82%, rgba(0,0,0,0) 100%);
-            background: -o-linear-gradient(top, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.3) 82%, rgba(0,0,0,0) 100%);
-            background: -ms-linear-gradient(top, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.3) 82%, rgba(0,0,0,0) 100%);
-            background: linear-gradient(to bottom, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.3) 82%, rgba(0,0,0,0) 100%);
+            background: rgba(0,0,0,0.5);
+            background: -moz-linear-gradient(top, rgba(0,0,0,0.5) 0%, rgba(0,0,0,0.5) 85%, rgba(0,0,0,0) 100%);
+            background: -webkit-gradient(left top, left bottom, color-stop(0%, rgba(0,0,0,0.5)), color-stop(85%, rgba(0,0,0,0.5)), color-stop(100%, rgba(0,0,0,0)));
+            background: -webkit-linear-gradient(top, rgba(0,0,0,0.5) 0%, rgba(0,0,0,0.5) 85%, rgba(0,0,0,0) 100%);
+            background: -o-linear-gradient(top, rgba(0,0,0,0.5) 0%, rgba(0,0,0,0.5) 85%, rgba(0,0,0,0) 100%);
+            background: -ms-linear-gradient(top, rgba(0,0,0,0.5) 0%, rgba(0,0,0,0.5) 85%, rgba(0,0,0,0) 100%);
+            background: linear-gradient(to bottom, rgba(0,0,0,0.5) 0%, rgba(0,0,0,0.5) 85%, rgba(0,0,0,0) 100%);
             filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#000000', endColorstr='#000000', GradientType=0 );
         }
 
@@ -82,9 +82,10 @@
                     <div class="control">
                         <div class="select is-medium">
                             <select id="modelSelector" name="model">
-                              <option value="neural_network" selected="selected">Neural Network</option>
-                              <option value="lstm" selected="selected">Recurrent Neural Network (LSTM)</option>
+                              <option value="neural_network" selected="selected">Feed-forward Neural Network</option>
+                              <option value="lstm">Recurrent Neural Network (LSTM)</option>
                               <option value="naive_bayes">Naive Bayes</option>
+                              <option value="svm">Linear SVM</option>
                             </select>
                           </div>
                     </div>
@@ -100,6 +101,9 @@
             <div id="results"></div>
 
             <canvas id="myChart" height="100"></canvas>
+
+            <h2>Top 5</h2>
+            <div id="top5"></div>
 
         </div>
     </section>
@@ -172,6 +176,8 @@
     const clipUrlInput = document.getElementById("clipUri");
     const modelSelector = document.getElementById("modelSelector");
     const clipPreviewContainer = document.getElementById("clipPreview");
+
+    const top5List = document.getElementById("top5");
     const resultsContainer = document.getElementById("results");
     var fetchInterval;
 
@@ -253,8 +259,16 @@
     function showResults(predictions) {
         const modelNames = Object.keys(predictions);
 
+
+
         modelNames.forEach(function (key) {
             updateChart(chart, predictions[key][0]);
+
+            const sorted = predictions[key][0].sort(function(a, b) {
+                return b.score - a.score;
+            })
+
+            top5List.innerHTML = sorted.map(each => each.label + " " + each.score).slice(0, 5).join("<br>")
         });
     }
 
@@ -271,6 +285,11 @@
             chart.data.datasets[0].data[index] = prediction.score;
         });
 
+        chart.update();
+    }
+
+    function setChartToZeros() {
+        chart.data.datasets[0].data = createDataOfZeros();
         chart.update();
     }
 
@@ -369,6 +388,8 @@
         if (event.data == YT.PlayerState.PLAYING) {
             getSegmentForCurrentTime();
             fetchInterval = setInterval(getSegmentForCurrentTime, 10000);
+        } else{
+            setChartToZeros();
         }
     }
     var fetchingSegment = false;
