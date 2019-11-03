@@ -4,6 +4,7 @@ from mgr.usecases.classify import (
 )
 from mgr.infrastructure.models.naivebayes import NaiveBayesModel
 from mgr.infrastructure.models.neuralnetwork import NeuralNetworkModel
+from mgr.infrastructure.models.lstm import LSTMRecurrentNeuralNetwork
 from mgr.infrastructure.youtube import YoutubeAudioLoader
 from flask import request
 
@@ -11,7 +12,8 @@ from flask import request
 # Models to classify
 models = {
     "naive_bayes": NaiveBayesModel(),
-    "neural_network": NeuralNetworkModel()
+    "neural_network": NeuralNetworkModel(),
+    "lstm": LSTMRecurrentNeuralNetwork()
 }
 
 # Audio downloader
