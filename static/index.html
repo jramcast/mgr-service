@@ -32,6 +32,18 @@
             filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#000000', endColorstr='#000000', GradientType=0 );
         }
 
+        .gradient-background {
+            background: rgba(0,0,0,0.5);
+            background: -moz-linear-gradient(top, rgba(0,0,0,0.5) 0%, rgba(0,0,0,0.5) 85%, rgba(0,0,0,0) 100%);
+            background: -webkit-gradient(left top, left bottom, color-stop(0%, rgba(0,0,0,0.5)), color-stop(85%, rgba(0,0,0,0.5)), color-stop(100%, rgba(0,0,0,0)));
+            background: -webkit-linear-gradient(top, rgba(0,0,0,0.5) 0%, rgba(0,0,0,0.5) 85%, rgba(0,0,0,0) 100%);
+            background: -o-linear-gradient(top, rgba(0,0,0,0.5) 0%, rgba(0,0,0,0.5) 85%, rgba(0,0,0,0) 100%);
+            background: -ms-linear-gradient(top, rgba(0,0,0,0.5) 0%, rgba(0,0,0,0.5) 85%, rgba(0,0,0,0) 100%);
+            background: linear-gradient(to bottom, rgba(0,0,0,0.5) 0%, rgba(0,0,0,0.5) 85%, rgba(0,0,0,0) 100%);
+            filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#000000', endColorstr='#000000', GradientType=0 );
+        }
+
+
         .title {
             margin: 10% 0;
         }
@@ -52,7 +64,7 @@
 </head>
 
 <body>
-    <section class="section translucid">
+    <section class="section translucid gradient-background">
         <div class="container">
 
 
@@ -102,18 +114,20 @@
 
             <canvas id="myChart" height="100"></canvas>
 
-            <h2 class="title is-2">Top 5</h2>
-            <div id="top5"></div>
+            <section class="gradient-background">
+                <h2 class="title is-2">Top 5</h2>
+                <div id="top5"></div>
 
-            <h2 class="title is-2">Song Charts</h2>
-            <h3 class="title is-3">Feed-forward neural network</h3>
-            <canvas id="neural_network" height="100"></canvas>
-            <h3 class="title is-3">LSTM</h3>
-            <canvas id="lstm" height="100"></canvas>
-            <h3 class="title is-3">Naive Bayes</h3>
-            <canvas id="naive_bayes" height="100"></canvas>
-            <h3 class="title is-3">SVM</h3>
-            <canvas id="svm" height="100"></canvas>
+                <h2 class="title is-2">Song Charts</h2>
+                <h3 class="title is-3">Feed-forward neural network</h3>
+                <canvas id="neural_network" height="100"></canvas>
+                <h3 class="title is-3">LSTM</h3>
+                <canvas id="lstm" height="100"></canvas>
+                <h3 class="title is-3">Naive Bayes</h3>
+                <canvas id="naive_bayes" height="100"></canvas>
+                <h3 class="title is-3">SVM</h3>
+                <canvas id="svm" height="100"></canvas>
+            </section>
 
 
         </div>
@@ -166,7 +180,6 @@
         "A capella",
         "Chant",
         "Mantra",
-        "Beatboxing",
         "Music of Africa",
         "Afrobeat",
         "Christian music",
@@ -178,6 +191,24 @@
         "Traditional music",
         "Independent music",
     ];
+
+
+    // // Init predictions store
+    // const predictionsStore = {
+    //     "NeuralNetworkModel": {},
+    //     "lstm": {}
+    //     "naive_bayes": {}
+    //     "svm": {}
+    // };
+    // const initialValues = {};
+    // labels.forEach(function(label) {
+    //     initialValues[label] = [];
+    // })
+    // Object.keys(predictionsStore).forEach(function(modelName) {
+    //     predictionsStore[modelName] = Object.assign({}, initialValues);
+    // });
+
+
 
     const barColors = labels.map(getRandomColor);
 
@@ -309,9 +340,7 @@
     }
 
     function updateAreaChart(chart, predictions) {
-        // chart.data.datasets[0].data = createDataOfZeros();
 
-        const dataSetsByLabel = {};
         chart.data.datasets.forEach(function(dataset) {
             dataSetsByLabel[dataset.label] = dataset;
         });
