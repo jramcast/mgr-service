@@ -102,8 +102,19 @@
 
             <canvas id="myChart" height="100"></canvas>
 
-            <h2>Top 5</h2>
+            <h2 class="title is-2">Top 5</h2>
             <div id="top5"></div>
+
+            <h2 class="title is-2">Song Charts</h2>
+            <h3 class="title is-3">Feed-forward neural network</h3>
+            <canvas id="neural_network" height="100"></canvas>
+            <h3 class="title is-3">LSTM</h3>
+            <canvas id="lstm" height="100"></canvas>
+            <h3 class="title is-3">Naive Bayes</h3>
+            <canvas id="naive_bayes" height="100"></canvas>
+            <h3 class="title is-3">SVM</h3>
+            <canvas id="svm" height="100"></canvas>
+
 
         </div>
     </section>
@@ -182,6 +193,13 @@
     var fetchInterval;
 
     const chart = createChart();
+
+    const areaCharts = {
+        "NeuralNetworkModel": createAreaChart("neural_network"),
+        "lstm": createAreaChart("lstm"),
+        "naive_bayes": createAreaChart("naive_bayes"),
+        "svm": createAreaChart("svm")
+    }
 
 
     // This code loads the IFrame Player API code asynchronously.
@@ -268,7 +286,9 @@
                 return b.score - a.score;
             })
 
-            top5List.innerHTML = sorted.map(each => each.label + " " + each.score).slice(0, 5).join("<br>")
+            top5List.innerHTML = sorted.map(each => each.label + " " + each.score).slice(0, 5).join("<br>");
+
+            updateAreaChart(areaCharts[key], predictions[key][0])
         });
     }
 
@@ -284,6 +304,23 @@
             });
             chart.data.datasets[0].data[index] = prediction.score;
         });
+
+        chart.update();
+    }
+
+    function updateAreaChart(chart, predictions) {
+        // chart.data.datasets[0].data = createDataOfZeros();
+
+        const dataSetsByLabel = {};
+        chart.data.datasets.forEach(function(dataset) {
+            dataSetsByLabel[dataset.label] = dataset;
+        });
+
+        predictions.forEach(function (prediction) {
+            dataSetsByLabel[prediction.label].data.push(prediction.score);
+        });
+
+        chart.data.labels.push(chart.data.labels[chart.data.labels.length -1] + 10);
 
         chart.update();
     }
@@ -364,6 +401,52 @@
 
         return myChart;
 
+    }
+
+    function createAreaDataStructure() {
+        return labels.map(function(label) {
+            return {
+                label,
+                data: [0],
+                fill: true,
+                backgroundColor: getRandomColor()
+            }
+        })
+    }
+
+
+    function createAreaChart(elementId) {
+        var ctx = document.getElementById(elementId).getContext('2d');
+        return new Chart(ctx, {
+            type: 'line',
+            data: {
+                datasets: createAreaDataStructure(),
+                labels: [0]
+            },
+            options: {
+                legend: {
+                    display: true
+                },
+                scales: {
+                    xAxes: [{
+                        ticks: {
+                            beginAtZero: true,
+                            display: true,
+                            min: 0,
+                            stepSize: 10
+                        }
+                    }],
+                    yAxes: [{
+						stacked: true,
+						scaleLabel: {
+							display: true,
+							labelString: 'Score'
+						}
+					}]
+                }
+            }
+
+        });
     }
 
 
