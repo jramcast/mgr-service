@@ -27,3 +27,18 @@ class AudioLoader(abc.ABC):
     @abc.abstractmethod
     def load_segment(self, uri, from_second) -> AudioSegment:
         pass
+
+
+class FeaturesCache(abc.ABC):
+
+    @abc.abstractmethod
+    def get(self, key: str):
+        pass
+
+    @abc.abstractmethod
+    def set(self, key: str, entry):
+        pass
+
+    @abc.abstractmethod
+    def __contains__(self, key: str) -> bool:
+        pass

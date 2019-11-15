@@ -1,14 +1,10 @@
 
-import os
-import sys
-import time
-import numpy as np
 import tensorflow as tf
 
-from .models.audioset import vggish_input
-from .models.audioset import vggish_postprocess
-from .models.audioset import vggish_slim
-from .models.audioset import vggish_params
+from .audioset import vggish_input
+from .audioset import vggish_postprocess
+from .audioset import vggish_slim
+from .audioset import vggish_params
 
 
 flags = tf.app.flags
@@ -29,6 +25,7 @@ FLAGS = flags.FLAGS
 
 
 NUMBER_OF_SECONDS = 10
+
 
 def resize_axis(tensor, axis, new_size, fill_value=0):
     """

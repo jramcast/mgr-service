@@ -10,16 +10,22 @@ from keras.layers import (Activation, BatchNormalization, Dense, Dropout,
 
 from ...usecases.interfaces import Model
 from ...domain.entities import Prediction, AudioSegment
-from .. import embeddings
 from ..ontology import MUSIC_GENRE_CLASSES
+from ..embeddings.loader import EmbeddingsLoader
 
 
 class NeuralNetworkModel(Model):
 
-    def __init__(self, num_units=768, drop_rate=0.5):
+    def __init__(
+        self,
+        embeddings_loader: EmbeddingsLoader,
+        num_units=768,
+        drop_rate=0.5
+    ):
         model_file = "./mgr/infrastructure/models/bal_deep_wt.h5"
         self.num_units = num_units
         self.drop_rate = drop_rate
+        self.embeddings_loader = embeddings_loader
 
         # Keep a single tensorflow session
         self.session = tf.Session()
@@ -42,9 +48,8 @@ class NeuralNetworkModel(Model):
     def preprocess(self, segments: List[AudioSegment]):
         # At this point, both the full clip and its segments
         # are supossed to be downloaded
-        x = np.array(
-            [embeddings.extract(segment.filename) for segment in segments]
-        )
+        embeddings = self.embeddings_loader.load_from_segments(segments)
+        x = np.array(embeddings)
         return x
 
     def classify(

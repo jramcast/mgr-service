@@ -1,24 +1,23 @@
 import joblib
 import numpy as np
 from typing import List
-from dataclasses import dataclass
 from ...usecases.interfaces import Model
 from ...domain.entities import Prediction, AudioSegment
-from .. import embeddings
 from ..ontology import MUSIC_GENRE_CLASSES
+from ..embeddings.loader import EmbeddingsLoader
 
 
 class SVMModel(Model):
 
-    def __init__(self):
+    def __init__(self, embeddings_loader: EmbeddingsLoader):
         model_file = "./mgr/infrastructure/models/bal_svm.joblib"
         self.model = joblib.load(model_file)
+        self.embeddings_loader = embeddings_loader
 
     def preprocess(self, segments: List[AudioSegment]):
         # At this point, both the full clip and its segments are supossed to be downloaded
-        x = np.array(
-            [embeddings.extract(segment.filename) for segment in segments]
-        )
+        embeddings = self.embeddings_loader.load_from_segments(segments)
+        x = np.array(embeddings)
         x = x.reshape(x.shape[0], 1280)
         print("x shape", x.shape)
         return x
