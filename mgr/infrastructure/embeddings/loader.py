@@ -19,6 +19,7 @@ class EmbeddingsLoader:
 
         for segment in segments:
             if segment.filename in self.cache:
+                print(segment.filename, "getting from cache!")
                 segment_features = self.cache.get(segment.filename)
             else:
                 segment_features = extractor.extract(segment.filename)

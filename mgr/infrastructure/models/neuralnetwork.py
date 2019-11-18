@@ -22,7 +22,7 @@ class NeuralNetworkModel(Model):
         num_units=768,
         drop_rate=0.5
     ):
-        model_file = "./mgr/infrastructure/models/bal_deep_wt.h5"
+        model_file = "./mgr/infrastructure/models/unbal_deep_wt.h5"
         self.num_units = num_units
         self.drop_rate = drop_rate
         self.embeddings_loader = embeddings_loader
