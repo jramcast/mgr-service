@@ -16,7 +16,7 @@ from ..embeddings.loader import EmbeddingsLoader
 class LSTMRecurrentNeuralNetwork(Model):
 
     def __init__(self, embeddings_loader: EmbeddingsLoader, num_units=768, drop_rate=0.5):
-        model_file = "./mgr/infrastructure/models/bal_lstm_wt.h5"
+        model_file = "./mgr/infrastructure/models/unbal_lstm_wt.h5"
         self.num_units = num_units
         self.drop_rate = drop_rate
         self.embeddings_loader = embeddings_loader
