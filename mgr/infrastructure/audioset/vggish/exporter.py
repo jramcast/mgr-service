@@ -1,10 +1,8 @@
 
 import tensorflow as tf
 
-from .audioset import vggish_input
-from .audioset import vggish_postprocess
-from .audioset import vggish_slim
-from .audioset import vggish_params
+from .model import vggish_slim
+from .model import vggish_params
 
 
 flags = tf.app.flags
@@ -18,13 +16,31 @@ flags.DEFINE_string(
     'checkpoint', 'data/vggish/vggish_model.ckpt',
     'Path to the VGGish checkpoint file.')
 
-flags.DEFINE_string('host', '', 'Placeholder to ignore flask host parameter')
-flags.DEFINE_string('cert', '', 'Placeholder to ignore flask cert parameter')
-
 FLAGS = flags.FLAGS
 
 
 NUMBER_OF_SECONDS = 10
+
+
+def export():
+    with tf.Graph().as_default(), tf.Session() as sess:
+        vggish_slim.define_vggish_slim(training=False)
+        vggish_slim.load_vggish_slim_checkpoint(sess, FLAGS.checkpoint)
+        features_tensor = sess.graph.get_tensor_by_name(
+            vggish_params.INPUT_TENSOR_NAME)
+        embedding_tensor = sess.graph.get_tensor_by_name(
+            vggish_params.OUTPUT_TENSOR_NAME)
+
+        embedding_tensor = resize_axis(
+            embedding_tensor,
+            axis=0,
+            new_size=NUMBER_OF_SECONDS)
+
+        tf.saved_model.simple_save(
+            sess,
+            "./exported_vggish/1",
+            inputs={'features_tensor': features_tensor},
+            outputs={embedding_tensor.name: embedding_tensor})
 
 
 def resize_axis(tensor, axis, new_size, fill_value=0):
@@ -66,35 +82,5 @@ def resize_axis(tensor, axis, new_size, fill_value=0):
     return resized
 
 
-def extract(wav_file_path):
-    # Prepare a postprocessor to munge the model embeddings.
-    pproc = vggish_postprocess.Postprocessor(
-        "data/vggish/vggish_pca_params.npz"
-    )
-
-    with tf.Graph().as_default(), tf.Session() as sess:
-        # Define the model in inference mode, load the checkpoint, and
-        # locate input and output tensors.
-        vggish_slim.define_vggish_slim(training=False)
-        vggish_slim.load_vggish_slim_checkpoint(sess, FLAGS.checkpoint)
-        features_tensor = sess.graph.get_tensor_by_name(
-            vggish_params.INPUT_TENSOR_NAME)
-        embedding_tensor = sess.graph.get_tensor_by_name(
-            vggish_params.OUTPUT_TENSOR_NAME)
-
-        embedding_tensor = resize_axis(
-            embedding_tensor,
-            axis=0,
-            new_size=NUMBER_OF_SECONDS)
-
-        example_batch = vggish_input.wavfile_to_examples(wav_file_path)
-
-        print(example_batch.shape)
-        # Run inference and postprocessing.
-        [embedding_batch] = sess.run(
-            [embedding_tensor],
-            feed_dict={features_tensor: example_batch}
-        )
-
-        postprocessed_batch = pproc.postprocess(embedding_batch)
-        return postprocessed_batch
+if __name__ == "__main__":
+    export()

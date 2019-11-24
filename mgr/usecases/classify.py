@@ -1,7 +1,7 @@
-from typing import List, Any, Dict
+from typing import List, Any
+
 from .interfaces import Model, AudioLoader
 from ..domain.entities import Prediction
-
 
 
 class ClassifyUseCase:
