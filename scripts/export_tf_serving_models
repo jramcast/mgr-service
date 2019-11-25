@@ -1,0 +1,22 @@
+#!/usr/bin/env sh
+# Description: Exports TF or Keras model to TF Servable models suitables for tensorflow serving
+
+# Always set current working directory to the root of the project
+cd "$(dirname "$0")/.."
+
+
+
+# Export vggish model for extraction of embeddings from wav singal inputs
+# mkdir -p ./data/vggish
+# wget https://storage.googleapis.com/audioset/vggish_model.ckpt -O ./data/vggish/vggish_model.ckpt
+# wget https://storage.googleapis.com/audioset/vggish_pca_params.npz -O ./data/vggish/vggish_pca_params.npz
+rm -rf mgr/infrastructure/audioset/vggish/.tfmodel
+python -m mgr.infrastructure.audioset.vggish.exporter
+
+# Export feed-forward neural network model
+rm -rf mgr/infrastructure/models/deep/feed_forward/.tfmodel
+python -m mgr.infrastructure.models.deep.feed_forward.exporter
+
+# Export LSTM recurrent neural network model
+rm -rf mgr/infrastructure/models/deep/lstm/.tfmodel
+python -m mgr.infrastructure.models.deep.lstm.exporter

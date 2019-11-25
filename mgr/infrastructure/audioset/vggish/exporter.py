@@ -1,8 +1,10 @@
 
+import os
+
 import tensorflow as tf
 
-from .model import vggish_slim
-from .model import vggish_params
+from mgr.infrastructure.audioset.vggish.model import vggish_slim
+from mgr.infrastructure.audioset.vggish.model import vggish_params
 
 
 flags = tf.app.flags
@@ -38,7 +40,7 @@ def export():
 
         tf.saved_model.simple_save(
             sess,
-            "./exported_vggish/1",
+            get_exported_path(),
             inputs={'features_tensor': features_tensor},
             outputs={embedding_tensor.name: embedding_tensor})
 
@@ -80,6 +82,11 @@ def resize_axis(tensor, axis, new_size, fill_value=0):
     new_shape[axis] = new_size
     resized.set_shape(new_shape)
     return resized
+
+
+def get_exported_path():
+    directory = os.path.dirname(os.path.abspath(__file__))
+    return os.path.join(directory, ".tfmodel", "1")
 
 
 if __name__ == "__main__":
