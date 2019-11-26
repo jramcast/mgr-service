@@ -38,6 +38,7 @@ class TensorFlowServingModelClient(Model):
         The second list is the list of labels for each segment
         """
         payload = json.dumps({"instances": embeddings.tolist()})
+        print("model payload", payload)
         r = requests.post(
             self.model_service_url,
             data=payload,
@@ -55,3 +56,5 @@ class TensorFlowServingModelClient(Model):
                     MUSIC_GENRE_CLASSES[j]["name"],
                     result[i][j]
                 ))
+
+        return predictions

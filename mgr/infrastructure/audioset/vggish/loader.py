@@ -23,6 +23,9 @@ class EmbeddingsLoader:
     ):
         self.model_service_url = model_service_url
         self.cache = cache
+        self.pproc = Postprocessor(
+            "data/vggish/vggish_pca_params.npz"
+        )
 
     def load_from_segments(self, segments: List[AudioSegment]) -> List:
         features = []
@@ -42,6 +45,7 @@ class EmbeddingsLoader:
     def extract_embeddings(self, filename):
         example_batch = wavfile_to_examples(filename)
         payload = json.dumps({"instances": example_batch.tolist()})
+        print("embeddings payload", example_batch.shape)
         r = requests.post(
             self.model_service_url,
             data=payload,
@@ -50,9 +54,7 @@ class EmbeddingsLoader:
 
         result = json.loads(r.text)['predictions']
 
-        # TODO: move this to constructor
-        pproc = Postprocessor(
-            "data/vggish/vggish_pca_params.npz"
-        )
-        postprocessed_batch = pproc.postprocess(np.array(result))
+        postprocessed_batch = self.pproc.postprocess(np.array(result))
+
+        print("embeddings result", postprocessed_batch)
         return np.array(postprocessed_batch)
