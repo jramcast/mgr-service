@@ -1,11 +1,11 @@
-FROM python:3.7
+FROM tiangolo/meinheld-gunicorn-flask:python3.7
 
 RUN apt-get update && \
     apt-get install -y libsndfile1 ffmpeg && \
     pip3 install pipenv
 
 # Create app directory
-RUN mkdir -p /app
+RUN mkdir -p /app && mkdir /app/.tmp
 WORKDIR /app
 
 # Install app dependencies
@@ -14,6 +14,4 @@ RUN pipenv install --system --deploy
 
 COPY . /app
 
-EXPOSE 3000
-
-CMD [ "pipenv", "run", "serve" ]
+EXPOSE 80

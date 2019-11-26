@@ -12,6 +12,9 @@ from mgr.infrastructure.audioset.vggish.loader import EmbeddingsLoader
 from flask import request
 
 
+
+
+
 features_cache = InMemoryFeaturesCache()
 embeddings_loader = EmbeddingsLoader(
     "http://vggish:8501/v1/models/vggish:predict",
