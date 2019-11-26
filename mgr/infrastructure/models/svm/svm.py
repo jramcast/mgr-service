@@ -1,16 +1,16 @@
 import joblib
 import numpy as np
 from typing import List
-from ...usecases.interfaces import Model
-from ...domain.entities import Prediction, AudioSegment
-from ..ontology import MUSIC_GENRE_CLASSES
-from ..embeddings.loader import EmbeddingsLoader
+from mgr.usecases.interfaces import Model
+from mgr.domain.entities import Prediction, AudioSegment
+from mgr.infrastructure.audioset.ontology import MUSIC_GENRE_CLASSES
+from mgr.infrastructure.audioset.vggish.loader import EmbeddingsLoader
 
 
 class SVMModel(Model):
 
     def __init__(self, embeddings_loader: EmbeddingsLoader):
-        model_file = "./mgr/infrastructure/models/bal_svm.joblib"
+        model_file = "./mgr/infrastructure/models/svm/bal_svm.joblib"
         self.model = joblib.load(model_file)
         self.embeddings_loader = embeddings_loader
 

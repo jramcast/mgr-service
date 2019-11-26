@@ -1,0 +1,22 @@
+version: '3'
+services:
+  ff_network:
+    build: mgr/infrastructure/models/deep/feed_forward
+    ports:
+    - "8501:8501"
+  lstm_network:
+    build: mgr/infrastructure/models/deep/lstm
+    ports:
+    - "8502:8501"
+  vggish:
+    build: mgr/infrastructure/audioset/vggish
+    ports:
+    - "8503:8501"
+  server:
+    build: .
+    ports:
+    - "5000:5000"
+    depends_on:
+      - ff_network
+      - lstm_network
+      - vggish

@@ -16,10 +16,10 @@ class TensorFlowServingModelClient(Model):
 
     def __init__(
         self,
-        model_service_url,
+        model_service_url: str,
         embeddings_loader: EmbeddingsLoader
     ):
-
+        self.model_service_url = model_service_url
         self.embeddings_loader = embeddings_loader
 
     def preprocess(self, segments: List[AudioSegment]):

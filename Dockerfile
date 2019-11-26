@@ -1,10 +1,8 @@
-FROM python:3.7-alpine
+FROM python:3.7
 
-# Install deps necessary for uvloop and postgres
-RUN apk add --no-cache build-base postgresql-dev
-
-# Install pipenv
-RUN pip3 install pipenv
+RUN apt-get update && \
+    apt-get install -y libsndfile1 && \
+    pip3 install pipenv
 
 # Create app directory
 RUN mkdir -p /app
@@ -16,8 +14,6 @@ RUN pipenv install --system --deploy
 
 COPY . /app
 
-ENV LOG_FORMAT json
-
 EXPOSE 3000
 
-CMD [ "python", "globals_service.py" ]
+CMD [ "pipenv", "run", "serve" ]

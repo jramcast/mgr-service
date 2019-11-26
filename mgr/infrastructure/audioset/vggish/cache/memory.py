@@ -1,4 +1,4 @@
-from ....usecases.interfaces import FeaturesCache
+from mgr.usecases.interfaces import FeaturesCache
 
 
 class InMemoryFeaturesCache(FeaturesCache):
