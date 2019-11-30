@@ -1,5 +1,7 @@
 # Music genre classification service
 
+This service, along with [mgr-app](https://github.com/jramcast/mgr-app) is a showcase of **Music Genre Classification** with **Audioset**, using different models.
+
 ## Development
 
 ### Make sure you have Python 3.7
