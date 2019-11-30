@@ -1,5 +1,5 @@
 
-name: CI worflow
+name: CI
 # This workflow is triggered on pushes to the repository.
 on: [push]
 
