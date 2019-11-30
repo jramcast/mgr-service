@@ -35,5 +35,5 @@ jobs:
       env:
         DEPLOY_KEY: ${{secrets.DEPLOY_KEY}}
       with:
-        args: "-az --delete --exclude=*.pyc --exclude=__pycache__ --exclude=.git --exclude=.tmp --exclude=.vscode mgr@${{secrets.PRODUCTION_HOST}}:/srv/mgr/"
+        args: "-avzr --delete --exclude=*.pyc --exclude=__pycache__ --exclude=.git --exclude=.tmp --exclude=.vscode . mgr@${{secrets.PRODUCTION_HOST}}:/srv/mgr/"
 
