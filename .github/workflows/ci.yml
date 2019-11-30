@@ -20,6 +20,9 @@ jobs:
     runs-on: ubuntu-latest
     env:
       DEPLOY_KEY: ${{ secrets.DEPLOY_KEY }}
+      REMOTE_USER: ${{ secrets.REMOTE_USER }}
+      REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
+      REMOTE_TARGET: ${{ secrets.REMOTE_TARGET }}
     steps:
     - uses: actions/checkout@master
     # - uses: actions/setup-python@v1
@@ -37,8 +40,6 @@ jobs:
       run: mkdir -p $HOME/.ssh/ && echo $DEPLOY_KEY > $HOME/.ssh/id_rsa
     - name: Deploy
       shell: bash
-      run: ls -la $HOME/.ssh
-        # echo ${{ secrets.DEPLOY_KEY }} > $HOME/.ssh/id_rsa
-        # rsync -azP --exclude=*.pyc --exclude=__pycache__ --exclude=.git --exclude=.tmp --exclude=.vscode . ${{secrets.REMOTE_USER}}@${{secrets.REMOTE_HOST}}:${{secrets.REMOTE_TARGET}}
+      run: rsync -azP --exclude=*.pyc --exclude=__pycache__ --exclude=.git --exclude=.tmp --exclude=.vscode . $REMOTE_USER@$REMOTE_HOST:$REMOTE_TARGET
 
 
