@@ -20,23 +20,19 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@master
-    - name: Install Node.js
-      uses: actions/setup-node@v1
-      with:
-        node-version: '12'
-    - uses: actions/setup-python@v1
-      with:
-        python-version: '3.7'
-    - uses: dschep/install-pipenv-action@v1
-    - name: Install libsndfile1
-      run: sudo apt-get install -y libsndfile1
-    - name: Export TF serving models
+    # - uses: actions/setup-python@v1
+    #   with:
+    #     python-version: '3.7'
+    # - uses: dschep/install-pipenv-action@v1
+    # - name: Install libsndfile1
+    #   run: sudo apt-get install -y libsndfile1
+    # - name: Export TF serving models
+    #   run: |
+    #     pipenv install --dev
+    #     pipenv run ./scripts/export_tf_serving_models
+    # - name: Deploy
       run: |
-        pipenv install --dev
-        pipenv run ./scripts/export_tf_serving_models
-    - name: Deploy
-      run: |
-        sudo apt install rsync
+        sudo apt-get install -y rsync
         mkdir -p $HOME/.ssh
         echo ${{ secrets.DEPLOY_KEY }} > $HOME/.ssh/id_rsa
         rsync -azP --exclude=*.pyc --exclude=__pycache__ --exclude=.git --exclude=.tmp --exclude=.vscode . ${{secrets.REMOTE_USER}}@${{secrets.REMOTE_HOST}}:${{secrets.REMOTE_TARGET}}
