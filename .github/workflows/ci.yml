@@ -35,7 +35,7 @@ jobs:
       run: echo ${{ secrets.DEPLOY_KEY }} > $HOME/.ssh/id_rsa
     - name: Deploy
       shell: bash
-      run: echo $PATH
+      run: ls -la $HOME/.ssh
         # echo ${{ secrets.DEPLOY_KEY }} > $HOME/.ssh/id_rsa
         # rsync -azP --exclude=*.pyc --exclude=__pycache__ --exclude=.git --exclude=.tmp --exclude=.vscode . ${{secrets.REMOTE_USER}}@${{secrets.REMOTE_HOST}}:${{secrets.REMOTE_TARGET}}
 
