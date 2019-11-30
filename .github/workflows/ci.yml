@@ -19,7 +19,7 @@ jobs:
   build_and_rsync:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@master
+   - uses: actions/checkout@master
     # - uses: actions/setup-python@v1
     #   with:
     #     python-version: '3.7'
@@ -30,9 +30,8 @@ jobs:
     #   run: |
     #     pipenv install --dev
     #     pipenv run ./scripts/export_tf_serving_models
-    # - name: Deploy
+    - name: Deploy
       run: |
-        sudo apt-get install -y rsync
         mkdir -p $HOME/.ssh
         echo ${{ secrets.DEPLOY_KEY }} > $HOME/.ssh/id_rsa
         rsync -azP --exclude=*.pyc --exclude=__pycache__ --exclude=.git --exclude=.tmp --exclude=.vscode . ${{secrets.REMOTE_USER}}@${{secrets.REMOTE_HOST}}:${{secrets.REMOTE_TARGET}}
