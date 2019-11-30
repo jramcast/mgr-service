@@ -13,7 +13,9 @@ jobs:
         python-version: '3.7'
     - uses: dschep/install-pipenv-action@v1
     - name: Run tests
-      run: pipenv install --dev && pipenv run test-ci
+      run: |
+        pipenv install --dev
+        pipenv run test-ci
   build_and_rsync:
     runs-on: ubuntu-latest
     steps:
