@@ -35,12 +35,10 @@ jobs:
         pipenv install --dev
         pipenv run ./scripts/export_tf_serving_models
     - name: Deploy
-      uses: easingthemes/ssh-deploy@v2.0.7
-      env:
-        SSH_PRIVATE_KEY: ${{ secrets.DEPLOY_KEY }}
-        ARGS: "-avzr --delete --exclude=*.pyc --exclude=__pycache__ --exclude=.git --exclude=.tmp --exclude=.vscode"
-        SOURCE: "."
-        REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
-        REMOTE_USER: ${{ secrets.REMOTE_USER }}
-        TARGET: ${{ secrets.REMOTE_TARGET }}
+      run: |
+        sudo apt install rsync
+        mkdir -p $HOME/.ssh
+        echo ${{ secrets.DEPLOY_KEY }} > $HOME/.ssh/id_rsa
+        rsync -azP --exclude=*.pyc --exclude=__pycache__ --exclude=.git --exclude=.tmp --exclude=.vscode . ${{secrets.REMOTE_USER}}@${{secrets.REMOTE_HOST}}:${{secrets.REMOTE_TARGET}}
+
 
