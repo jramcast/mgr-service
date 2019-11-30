@@ -37,7 +37,8 @@ jobs:
     #     pipenv run ./scripts/export_tf_serving_models
     - name: Set ssh key
       shell: bash
-      run: mkdir -p $HOME/.ssh/ && echo $DEPLOY_KEY > $HOME/.ssh/id_rsa && ssh-keyscan -t rsa $REMOTE_HOST >> $HOME/.ssh/known_hosts
+      run: mkdir -p $HOME/.ssh/ && echo $DEPLOY_KEY > $HOME/.ssh/id_rsa && chmod 600 $HOME/.ssh/id_rsa  && ssh-keyscan -t rsa $REMOTE_HOST >> $HOME/.ssh/known_hosts
     - name: Deploy
       shell: bash
       run: rsync -azP --exclude=*.pyc --exclude=__pycache__ --exclude=.git --exclude=.tmp --exclude=.vscode . $REMOTE_USER@$REMOTE_HOST:$REMOTE_TARGET
+
