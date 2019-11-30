@@ -30,10 +30,13 @@ jobs:
       run: |
         pipenv install --dev
         pipenv run ./scripts/export_tf_serving_models
-    - name: rsync deployments
-      uses: contention/rsync-deployments@v1.0.0
+    - name: Deploy
+      uses: easingthemes/ssh-deploy@v2.0.2
       env:
-        DEPLOY_KEY: ${{secrets.DEPLOY_KEY}}
-      with:
-        args: "-avzr --delete --exclude=*.pyc --exclude=__pycache__ --exclude=.git --exclude=.tmp --exclude=.vscode . mgr@${{secrets.PRODUCTION_HOST}}:/srv/mgr/"
+        SSH_PRIVATE_KEY: ${{ secrets.DEPLOY_KEY }}
+        ARGS: "-avzr --delete --exclude=*.pyc --exclude=__pycache__ --exclude=.git --exclude=.tmp --exclude=.vscode"
+        SOURCE: "."
+        REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
+        REMOTE_USER: ${{ secrets.REMOTE_USER }}
+        TARGET: ${{ secrets.REMOTE_TARGET }}
 
