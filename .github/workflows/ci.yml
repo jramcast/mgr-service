@@ -4,18 +4,18 @@ name: CI
 on: [push]
 
 jobs:
-  unit_test:
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@master
-    - uses: actions/setup-python@v1
-      with:
-        python-version: '3.7'
-    - uses: dschep/install-pipenv-action@v1
-    - name: Run tests
-      run: |
-        pipenv install --dev
-        pipenv run test-ci
+  # unit_test:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #   - uses: actions/checkout@master
+  #   - uses: actions/setup-python@v1
+  #     with:
+  #       python-version: '3.7'
+  #   - uses: dschep/install-pipenv-action@v1
+  #   - name: Run tests
+  #     run: |
+  #       pipenv install --dev
+  #       pipenv run test-ci
   build_and_rsync:
     runs-on: ubuntu-latest
     steps:
