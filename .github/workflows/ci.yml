@@ -9,6 +9,10 @@ jobs:
     steps:
     - uses: actions/checkout@master
     - uses: actions/setup-python@v1
+      with:
+        python-version: '3.7'
     - uses: dschep/install-pipenv-action@v1
-    - name: Run tests
+    - name: Install deps
       run: pipenv install --system && pipenv run test-ci
+    - name: Run tests
+      run: pipenv run test-ci
