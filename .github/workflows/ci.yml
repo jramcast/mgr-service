@@ -18,6 +18,8 @@ jobs:
   #       pipenv run test-ci
   build_and_rsync:
     runs-on: ubuntu-latest
+    env:
+      DEPLOY_KEY: ${{ secrets.DEPLOY_KEY }}
     steps:
     - uses: actions/checkout@master
     # - uses: actions/setup-python@v1
@@ -32,7 +34,7 @@ jobs:
     #     pipenv run ./scripts/export_tf_serving_models
     - name: Set ssh key
       shell: bash
-      run: echo ${{ secrets.DEPLOY_KEY }} > $HOME/.ssh/id_rsa
+      run: echo $DEPLOY_KEY > $HOME/.ssh/id_rsa
     - name: Deploy
       shell: bash
       run: ls -la $HOME/.ssh
