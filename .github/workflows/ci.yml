@@ -30,11 +30,12 @@ jobs:
     #   run: |
     #     pipenv install --dev
     #     pipenv run ./scripts/export_tf_serving_models
+    - name: Set ssh key
+      shell: bash
+      run: echo ${{ secrets.DEPLOY_KEY }} > $HOME/.ssh/id_rsa
     - name: Deploy
       shell: bash
-      run: |
-        echo $PATH &&
-        echo $PATH
+      run: echo $PATH
         # echo ${{ secrets.DEPLOY_KEY }} > $HOME/.ssh/id_rsa
         # rsync -azP --exclude=*.pyc --exclude=__pycache__ --exclude=.git --exclude=.tmp --exclude=.vscode . ${{secrets.REMOTE_USER}}@${{secrets.REMOTE_HOST}}:${{secrets.REMOTE_TARGET}}
 
