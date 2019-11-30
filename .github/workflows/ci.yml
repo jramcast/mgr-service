@@ -32,8 +32,8 @@ jobs:
     #     pipenv run ./scripts/export_tf_serving_models
     - name: Deploy
       shell: bash
-      run: |
-        echo ${{ secrets.DEPLOY_KEY }} > $HOME/.ssh/id_rsa
-        rsync -azP --exclude=*.pyc --exclude=__pycache__ --exclude=.git --exclude=.tmp --exclude=.vscode . ${{secrets.REMOTE_USER}}@${{secrets.REMOTE_HOST}}:${{secrets.REMOTE_TARGET}}
+      run: echo $PATH
+        # echo ${{ secrets.DEPLOY_KEY }} > $HOME/.ssh/id_rsa
+        # rsync -azP --exclude=*.pyc --exclude=__pycache__ --exclude=.git --exclude=.tmp --exclude=.vscode . ${{secrets.REMOTE_USER}}@${{secrets.REMOTE_HOST}}:${{secrets.REMOTE_TARGET}}
 
 
