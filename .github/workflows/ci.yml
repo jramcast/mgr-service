@@ -13,6 +13,6 @@ jobs:
         python-version: '3.7'
     - uses: dschep/install-pipenv-action@v1
     - name: Install deps
-      run: pipenv install --system && pipenv run test-ci
+      run: pipenv install --dev --system
     - name: Run tests
       run: pipenv run test-ci
