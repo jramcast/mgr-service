@@ -33,7 +33,7 @@ jobs:
     - name: rsync deployments
       uses: contention/rsync-deployments@v1.0.0
       env:
-        secrets: "DEPLOY_KEY"
+        DEPLOY_KEY: ${{secrets.DEPLOY_KEY}}
       with:
-        args: "-az --delete --exclude=*.pyc --exclude=__pycache__ --exclude=.git --exclude=.tmp --exclude=.vscode mgr@${{ secrets.PRODUCTION_HOST }}:/srv/mgr/"
+        args: "-az --delete --exclude=*.pyc --exclude=__pycache__ --exclude=.git --exclude=.tmp --exclude=.vscode mgr@${{secrets.PRODUCTION_HOST}}:/srv/mgr/"
 
