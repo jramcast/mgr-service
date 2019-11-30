@@ -1,0 +1,12 @@
+
+name: Greet Everyone
+# This workflow is triggered on pushes to the repository.
+on: [push]
+
+jobs:
+  unit_test:
+    name: Unit tests
+    steps:
+    - name: Run tests
+      uses: dschep/install-pipenv-action@v1
+      run: pipenv run test-ci
