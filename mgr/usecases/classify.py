@@ -1,4 +1,4 @@
-from typing import List, Any
+from typing import List, Any, Dict
 
 from .interfaces import Model, AudioLoader
 from ..domain.entities import Prediction
@@ -8,22 +8,26 @@ class ClassifyUseCase:
 
     models: List[Model]
 
-    def __init__(self, models: List[Model], audio_loader: AudioLoader):
+    def __init__(self, models: Dict[str, Model], audio_loader: AudioLoader):
         self.models = models
         self.audio_loader = audio_loader
 
-    def run(self, uri, from_second: int) -> List[Any]:
+    def run(self, uri, from_second: int, model_key: str) -> List[Any]:
+        """
+        Classifies a music audio segment starting at a given second,
+        using the specified model
+        """
         segment = self.audio_loader.load_segment(uri, from_second)
         results = {}
 
-        for model in self.models:
-            samples = model.preprocess([segment])
-            predictions = model.classify(samples)
-            results[model.name] = self.to_dict(predictions, uri, from_second)
+        model = self.models[model_key]
+        samples = model.preprocess([segment])
+        predictions = model.classify(samples)
+        results[model.name] = self._to_dict(predictions, uri, from_second)
 
         return results
 
-    def to_dict(self, predictions: List[List[Prediction]], uri, from_second):
+    def _to_dict(self, predictions: List[List[Prediction]], uri, from_second):
         segment = predictions[0]
         formatted_segment = {
             "labels": [],

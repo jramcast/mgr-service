@@ -11,15 +11,20 @@ def test_predict_returns_predictions():
     usecase = ClassifyUseCase(models, FakeAudioLoader())
 
     inputdata = "youtube.com/1234"
-    result = usecase.run(inputdata, model_id="fakeModel")
-    assert {
-        "FakeModel": [
-            [{
-                "label": "ball",
+    result = usecase.run(inputdata, from_second=10, model_key="fakeModel")
+    assert result == {
+        "FakeModel": {
+            "labels": [{
+                "name": "ball",
                 "score": 0.84
-            }]
-        ]
-    } == result
+            }],
+            "segment": {
+                "fromSecond": 10,
+                "toSecond": 20,
+                "mediaUri": "youtube.com/1234"
+            }
+        }
+    }
 
 
 class FakeAudioLoader(AudioLoader):
@@ -27,8 +32,8 @@ class FakeAudioLoader(AudioLoader):
     def load(self, uri):
         return AudioClip("test.wav", 60)
 
-    def load_segment(self, uri):
-        return AudioSegment("test_000.wav", start=0, stop=10)
+    def load_segment(self, uri, from_second):
+        return AudioSegment("test_000.wav", start=from_second, stop=20)
 
 
 class FakeModel(Model):
