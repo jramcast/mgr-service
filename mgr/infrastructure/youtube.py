@@ -8,19 +8,22 @@ from ..domain.entities import AudioClip, AudioSegment
 class YoutubeAudioLoader(AudioLoader):
 
     def load(self, uri) -> AudioClip:
+        """
+        Downloads a full youtube clip and splits it in segments
+        """
         video = pafy.new(uri)
         audio_url = _get_audio_url(video)
         filepath = _download_raw_audio(video, audio_url)
         return AudioClip(filepath, video.length)
 
-    def load_segment(self, uri, from_second):
+    def load_segment(self, uri, from_second, duration=10):
+        """
+        Downloads a segment from a youtube clip
+        """
         video = pafy.new(uri)
         audio_url = _get_audio_url(video)
-        duration = 10
-        print("downloading segment: ", uri, from_second)
         filepath = _download_raw_audio_segment(
             video, audio_url, from_second, duration)
-        print("segment downloaded: ", filepath)
         return AudioSegment(filepath, from_second, from_second + duration)
 
 
@@ -74,9 +77,6 @@ def _download_raw_audio(video, url):
         print(stderr)
     else:
         print("Downloaded audio to " + audio_filepath)
-
-
-    print("Video length seconds", video.length)
 
     SEGMENT_SECONDS = 10
     # for i in range(math.floor(video.length / SEGMENT_SECONDS)):

@@ -31,6 +31,7 @@ python_version = "3.7"
 
 [scripts]
 serve = "flask run --host=0.0.0.0"
-test = "python -m pytest tests "
-test-watch = "watch --color pipenv run test --color=yes"
-test-ci = "python -m pytest tests --cov=service -v"
+test-unit = "python -m pytest tests/unit"
+test-unit-watch = "watch --color pipenv run test-unit --color=yes"
+test-integration = "python -m pytest tests/integration"
+test-ci = "python -m pytest tests/unit --cov=service -v"
