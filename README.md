@@ -65,3 +65,8 @@ Then you can either build your Docker images and deploy them to, for example a k
 You can follow this guide:
 
 https://www.guyatic.net/2017/05/09/configuring-ssl-letsencrypt-certbot-nginx-reverse-proxy-nat/
+
+
+## TODO
+
+Production: Remove tmp files periodically
