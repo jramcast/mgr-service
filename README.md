@@ -59,3 +59,9 @@ First, make sure that Tensorflow models are exported for **Tensorflow Serving**:
 ```
 
 Then you can either build your Docker images and deploy them to, for example a k8s cluster, or just use docker-compose to run them.
+
+### SSL Setup
+
+You can follow this guide:
+
+https://www.guyatic.net/2017/05/09/configuring-ssl-letsencrypt-certbot-nginx-reverse-proxy-nat/
