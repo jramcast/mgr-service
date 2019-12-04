@@ -1,37 +1,55 @@
 import os
 import subprocess as sp
+from dataclasses import dataclass
+
 import pafy
-from ..usecases.interfaces import AudioLoader
+from ..usecases.interfaces import AudioLoader, Cache
 from ..domain.entities import AudioClip, AudioSegment
 
 
+@dataclass
+class VideoInfo:
+    id: str
+    audio_url: str
+    length: int
+
+
 class YoutubeAudioLoader(AudioLoader):
+
+    def __init__(self, cache: Cache[VideoInfo]):
+        self.cache = cache
 
     def load(self, uri) -> AudioClip:
         """
         Downloads a full youtube clip and splits it in segments
         """
-        video = pafy.new(uri)
-        audio_url = _get_audio_url(video)
-        filepath = _download_raw_audio(video, audio_url)
-        return AudioClip(filepath, video.length)
+        videoinfo = self._get_video_info(uri)
+        filepath = _download_raw_audio(videoinfo)
+        return AudioClip(filepath, videoinfo.length)
 
     def load_segment(self, uri, from_second, duration=10):
         """
         Downloads a segment from a youtube clip
         """
-        video = pafy.new(uri)
-        audio_url = _get_audio_url(video)
+        videoinfo = self._get_video_info(uri)
         filepath = _download_raw_audio_segment(
-            video, audio_url, from_second, duration)
+            videoinfo, from_second, duration)
         return AudioSegment(filepath, from_second, from_second + duration)
 
-
-def download(video_page_url):
-    # Get the direct URLs to the videos with best audio and with best video (with audio)
-    video = pafy.new(video_page_url)
-    audio_url = _get_audio_url(video)
-    return _download_raw_audio(video, audio_url)
+    def _get_video_info(self, uri: str) -> VideoInfo:
+        videoinfo = self.cache.get(uri)
+        print(":::" * 500)
+        print("Videoinfo from cache", videoinfo)
+        if videoinfo is None:
+            video = pafy.new(uri)
+            audio_url = _get_audio_url(video)
+            videoinfo = VideoInfo(
+                video.videoid,
+                audio_url,
+                video.length
+            )
+            self.cache.set(uri, videoinfo)
+        return videoinfo
 
 
 def _get_audio_url(video):
@@ -40,9 +58,7 @@ def _get_audio_url(video):
     return best_audio_url
 
 
-def _download_raw_audio(video, url):
-
-    print("DOWNLOADING AUDIO.")
+def _download_raw_audio(videoinfo: VideoInfo):
 
     # Set output settings
     audio_codec = 'pcm_s16le'
@@ -51,7 +67,7 @@ def _download_raw_audio(video, url):
     # Get output video and audio filepaths
     base_path = './.tmp/'
 
-    basename_fmt = video.videoid
+    basename_fmt = videoinfo.id
     audio_filepath = os.path.join(
         base_path, basename_fmt + '.' + audio_container
     )
@@ -60,9 +76,9 @@ def _download_raw_audio(video, url):
     audio_dl_args = [
         'ffmpeg',
         '-ss', str(0),            # The beginning of the trim window
-        '-i', url,                # Specify the input video URL
-        '-t', str(video.length),  # Specify the duration of the output
-        '-y',                     # Override file if exists
+        '-i', videoinfo.audio_url,  # Specify the input video URL
+        '-t', str(videoinfo.length),  # Specify the duration of the output
+        '-y',                      # Override file if exists
         '-vn',                    # Suppress the video stream
         '-ac', '2',               # Set the number of channels
         '-sample_fmt', 's16',     # Specify the bit depth
@@ -83,7 +99,7 @@ def _download_raw_audio(video, url):
 
     #     start = i * SEGMENT_SECONDS
     #     end = start + SEGMENT_SECONDS
-    basename_segment_fmt = "{}_%03d".format(video.videoid)
+    basename_segment_fmt = "{}_%03d".format(videoinfo.id)
     segment_audio_filepath = os.path.join(
         base_path, basename_segment_fmt + '.' + audio_container
     )
@@ -109,9 +125,7 @@ def _download_raw_audio(video, url):
     return audio_filepath
 
 
-def _download_raw_audio_segment(video, url, from_second, duration):
-
-    print("DOWNLOADING AUDIO.")
+def _download_raw_audio_segment(videoinfo: VideoInfo, from_second, duration):
 
     # Set output settings
     audio_codec = 'pcm_s16le'
@@ -120,7 +134,7 @@ def _download_raw_audio_segment(video, url, from_second, duration):
     # Get output video and audio filepaths
     base_path = './.tmp/'
 
-    basename_fmt = "{}_from_{}".format(video.videoid, from_second)
+    basename_fmt = "{}_from_{}".format(videoinfo.id, from_second)
     audio_filepath = os.path.join(
         base_path, basename_fmt + '.' + audio_container
     )
@@ -133,7 +147,7 @@ def _download_raw_audio_segment(video, url, from_second, duration):
     audio_dl_args = [
         'ffmpeg',
         '-ss', str(from_second),    # The beginning of the trim window
-        '-i', url,                  # Specify the input video URL
+        '-i', videoinfo.audio_url,  # Specify the input video URL
         '-t', str(duration),        # Specify the duration of the output
         '-y',                     # Override file if exists
         '-vn',                    # Suppress the video stream
@@ -152,3 +166,18 @@ def _download_raw_audio_segment(video, url, from_second, duration):
         print("Downloaded audio to " + audio_filepath)
 
     return audio_filepath
+
+
+class VideoInfoCacheInMemory(Cache[VideoInfo]):
+
+    def __init__(self):
+        self.storage = {}
+
+    def get(self, key: str) -> VideoInfo:
+        return self.storage.get(key)
+
+    def set(self, key: str, entry: VideoInfo):
+        self.storage[key] = entry
+
+    def __contains__(self, key: str) -> bool:
+        return key in self.storage

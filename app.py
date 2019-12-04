@@ -6,7 +6,8 @@ from mgr.infrastructure.models.naive_bayes.naivebayes import NaiveBayesModel
 from mgr.infrastructure.models.deep.feed_forward import FeedForwardNetworkModel
 from mgr.infrastructure.models.deep.lstm import LSTMRecurrentNeuralNetwork
 from mgr.infrastructure.models.svm.svm import SVMModel
-from mgr.infrastructure.youtube import YoutubeAudioLoader
+from mgr.infrastructure.youtube import (
+    YoutubeAudioLoader, VideoInfoCacheInMemory)
 from mgr.infrastructure.audioset.vggish.cache.memory import (
     InMemoryFeaturesCache
 )
@@ -38,7 +39,8 @@ models = [
 ]
 
 # Audio downloader
-audio_downloader = YoutubeAudioLoader()
+youtube_cache = VideoInfoCacheInMemory()
+audio_downloader = YoutubeAudioLoader(youtube_cache)
 
 
 # Use case initialization

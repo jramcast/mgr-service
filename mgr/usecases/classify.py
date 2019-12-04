@@ -8,11 +8,11 @@ class ClassifyUseCase:
 
     models: List[Model]
 
-    def __init__(self, models: Dict[str, Model], audio_loader: AudioLoader):
+    def __init__(self, models: List[Model], audio_loader: AudioLoader):
         self.models = models
         self.audio_loader = audio_loader
 
-    def run(self, uri, from_second: int, model_key: str) -> List[Any]:
+    def run(self, uri, from_second: int) -> List[Any]:
         """
         Classifies a music audio segment starting at a given second,
         using the specified model
@@ -20,10 +20,10 @@ class ClassifyUseCase:
         segment = self.audio_loader.load_segment(uri, from_second)
         results = {}
 
-        model = self.models[model_key]
-        samples = model.preprocess([segment])
-        predictions = model.classify(samples)
-        results[model.name] = self._to_dict(predictions, uri, from_second)
+        for model in self.models:
+            samples = model.preprocess([segment])
+            predictions = model.classify(samples)
+            results[model.name] = self._to_dict(predictions, uri, from_second)
 
         return results
 

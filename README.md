@@ -35,7 +35,6 @@ Tensorflow models need to be containerzied and served with **Tensorflow Serving*
 ./scripts/export_tf_serving_models
 ```
 
-
 ### Run the service locally
 
 Install dependencies:

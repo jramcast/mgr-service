@@ -1,5 +1,5 @@
 import abc
-from typing import List
+from typing import List, TypeVar, Generic
 from ..domain.entities import AudioClip, Prediction, AudioSegment
 
 
@@ -29,6 +29,7 @@ class AudioLoader(abc.ABC):
         pass
 
 
+# Todo, have only 1 cache class
 class FeaturesCache(abc.ABC):
 
     @abc.abstractmethod
@@ -37,6 +38,24 @@ class FeaturesCache(abc.ABC):
 
     @abc.abstractmethod
     def set(self, key: str, entry):
+        pass
+
+    @abc.abstractmethod
+    def __contains__(self, key: str) -> bool:
+        pass
+
+
+T = TypeVar('T')
+
+
+class Cache(abc.ABC, Generic[T]):
+
+    @abc.abstractmethod
+    def get(self, key: str) -> T:
+        pass
+
+    @abc.abstractmethod
+    def set(self, key: str, entry: T):
         pass
 
     @abc.abstractmethod
