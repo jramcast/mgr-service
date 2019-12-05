@@ -41,7 +41,7 @@ class YoutubeAudioLoader(AudioLoader):
         print(":::" * 500)
         print("Videoinfo from cache", videoinfo)
         if videoinfo is None:
-            video = pafy.new(uri)
+            video = pafy.new(uri, basic=False, ydl_opts={"proxy": "http://localhost:9191"})
             audio_url = _get_audio_url(video)
             videoinfo = VideoInfo(
                 video.videoid,
