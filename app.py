@@ -1,4 +1,5 @@
 import os
+import logging
 
 from mgr.infrastructure.server.flask import Server
 from mgr.usecases.classify import ClassifyUseCase
@@ -7,7 +8,7 @@ from mgr.infrastructure.models.deep.feed_forward import FeedForwardNetworkModel
 from mgr.infrastructure.models.deep.lstm import LSTMRecurrentNeuralNetwork
 from mgr.infrastructure.models.svm.svm import SVMModel
 from mgr.infrastructure.youtube import (
-    YoutubeAudioLoader, VideoInfoCacheInMemory)
+    YoutubeAudioLoader, VideoInfoCacheInMemory, ProxiedVideoInfoLoader)
 from mgr.infrastructure.audioset.vggish.cache.memory import (
     InMemoryFeaturesCache
 )
@@ -26,6 +27,13 @@ RNN_PREDICT_URL = os.environ.get(
     "RNN_PREDICT_URL",
     "http://lstm_network:8501/v1/models/lstm_network:predict")
 
+PROXIES = [proxy.strip() for proxy in os.environ.get("PROXIES", "").split(",")]
+PROXIES = [proxy for proxy in PROXIES if proxy]
+
+
+logger = logging.getLogger("mgr-service")
+logger.setLevel(os.environ.get("LOG_LEVEL", "INFO"))
+
 
 features_cache = InMemoryFeaturesCache()
 embeddings_loader = EmbeddingsLoader(VGGISH_PREDICT_URL, features_cache)
@@ -40,7 +48,8 @@ models = [
 
 # Audio downloader
 youtube_cache = VideoInfoCacheInMemory()
-audio_downloader = YoutubeAudioLoader(youtube_cache)
+videoinfo_loader = ProxiedVideoInfoLoader(PROXIES)
+audio_downloader = YoutubeAudioLoader(youtube_cache, videoinfo_loader, logger)
 
 
 # Use case initialization
