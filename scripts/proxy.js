@@ -1,4 +1,4 @@
-// Example grabbed from here
+// This is a small proxy server to avoid bans from youtube
 
 const http = require('http')
 const port = process.env.PORT || 8383
