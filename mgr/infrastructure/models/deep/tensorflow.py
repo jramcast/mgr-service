@@ -38,14 +38,13 @@ class TensorFlowServingModelClient(Model):
         The second list is the list of labels for each segment
         """
         payload = json.dumps({"instances": embeddings.tolist()})
-        print("model payload", payload)
+
         r = requests.post(
             self.model_service_url,
             data=payload,
             headers={"content-type": "application/json"}
         )
         result = json.loads(r.text)['predictions']
-        print("\n --> result", result)
 
         predictions = []
         for i, record in enumerate(result):

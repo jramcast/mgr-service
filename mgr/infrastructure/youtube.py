@@ -1,5 +1,4 @@
 import os
-import abc
 import logging
 import subprocess as sp
 from dataclasses import dataclass
@@ -20,25 +19,53 @@ class VideoInfo:
     length: int
 
 
-class VideoInfoLoader(abc.ABC):
+class YoutubeAudioLoader(AudioLoader):
 
-    @abc.abstractmethod
-    def load(self, uri) -> VideoInfo:
-        pass
+    logger: logging.Logger
 
-
-class ProxiedVideoInfoLoader(VideoInfoLoader):
-
-    def __init__(self, proxies: List[str], max_retries=2):
+    def __init__(
+        self,
+        cache: Cache[VideoInfo],
+        logger: logging.Logger,
+        proxies: List[str] = [],
+        max_retries=2
+    ):
+        self.cache = cache
+        self.logger = logger
         self.proxies = [None] + proxies  # First is direct download (no proxy)
         self.max_retries = max_retries
         self.current_proxy_idx = 0
         self.current_proxy = None
 
-    def load(self, uri: str) -> VideoInfo:
-        return self._load_with_retry(uri)
+    def load(self, uri) -> AudioClip:
+        """
+        Downloads a full youtube clip and splits it in segments
+        """
+        videoinfo = self._get_videoinfo(uri)
+        filepath = _download_raw_audio(videoinfo, self.current_proxy)
+        return AudioClip(filepath, videoinfo.length)
 
-    def _load_with_retry(self, uri: str, retry=0) -> VideoInfo:
+    def load_segment(self, uri, from_second, duration=10):
+        """
+        Downloads a segment from a youtube clip
+        """
+        videoinfo = self._get_videoinfo(uri)
+        filepath = _download_raw_audio_segment(
+            videoinfo, from_second, duration, self.current_proxy)
+        return AudioSegment(filepath, from_second, from_second + duration)
+
+    def _get_videoinfo(self, uri: str) -> VideoInfo:
+        videoinfo = self.cache.get(uri)
+        if True or videoinfo is None:
+            self.logger.debug(
+                "Video info retrieved from youtube (MISS): %s", uri)
+            videoinfo = self._load_videoinfo_with_retry(uri)
+            self.cache.set(uri, videoinfo)
+        else:
+            self.logger.debug("Video info retrieved from cache (HIT): %s", uri)
+        return videoinfo
+
+    def _load_videoinfo_with_retry(self, uri: str, retry=0) -> VideoInfo:
         self.current_proxy_idx += retry
         proxy_idx = self.current_proxy_idx % len(self.proxies)
         proxy = self.proxies[proxy_idx]
@@ -51,6 +78,12 @@ class ProxiedVideoInfoLoader(VideoInfoLoader):
 
         try:
             video = pafy.new(uri, basic=False, ydl_opts=youtube_dl_opts)
+            self.logger.debug(
+                "Downloading video: %s. Proxy: %s. Retry %d",
+                uri,
+                proxy,
+                retry
+            )
             audio_url = _get_audio_url(video)
             return VideoInfo(
                 video.videoid,
@@ -62,47 +95,6 @@ class ProxiedVideoInfoLoader(VideoInfoLoader):
                 return self._load_with_retry(uri, retry + 1)
             else:
                 raise err
-
-
-class YoutubeAudioLoader(AudioLoader):
-
-    loader: VideoInfoLoader
-    logger: logging.Logger
-
-    def __init__(
-        self,
-        cache: Cache[VideoInfo],
-        loader: VideoInfoLoader,
-        logger: logging.Logger
-    ):
-        self.cache = cache
-        self.logger = logger
-        self.loader = loader
-
-    def load(self, uri) -> AudioClip:
-        """
-        Downloads a full youtube clip and splits it in segments
-        """
-        videoinfo = self._get_video_info(uri)
-        filepath = _download_raw_audio(videoinfo, self.loader.current_proxy)
-        return AudioClip(filepath, videoinfo.length)
-
-    def load_segment(self, uri, from_second, duration=10):
-        """
-        Downloads a segment from a youtube clip
-        """
-        videoinfo = self._get_video_info(uri)
-        filepath = _download_raw_audio_segment(
-            videoinfo, from_second, duration, self.loader.current_proxy)
-        return AudioSegment(filepath, from_second, from_second + duration)
-
-    def _get_video_info(self, uri: str) -> VideoInfo:
-        videoinfo = self.cache.get(uri)
-        if videoinfo is None:
-            self.logger.debug("Requesting video info to youtube: %s", uri)
-            videoinfo = self.loader.load(uri)
-            self.cache.set(uri, videoinfo)
-        return videoinfo
 
 
 def _get_audio_url(video):
@@ -197,7 +189,9 @@ def _download_raw_audio_segment(
     )
 
     if os.path.exists(audio_filepath):
-        print("File already exists")
+        print(
+            "Segment file exists in disk %s. Skipping download",
+            videoinfo.id)
         return audio_filepath
 
     # Download the audio

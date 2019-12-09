@@ -1,4 +1,5 @@
 import os
+import sys
 import logging
 
 from mgr.infrastructure.server.flask import Server
@@ -8,7 +9,7 @@ from mgr.infrastructure.models.deep.feed_forward import FeedForwardNetworkModel
 from mgr.infrastructure.models.deep.lstm import LSTMRecurrentNeuralNetwork
 from mgr.infrastructure.models.svm.svm import SVMModel
 from mgr.infrastructure.youtube import (
-    YoutubeAudioLoader, VideoInfoCacheInMemory, ProxiedVideoInfoLoader)
+    YoutubeAudioLoader, VideoInfoCacheInMemory)
 from mgr.infrastructure.audioset.vggish.cache.memory import (
     InMemoryFeaturesCache
 )
@@ -32,6 +33,10 @@ PROXIES = [proxy for proxy in PROXIES if proxy]
 
 
 logger = logging.getLogger("mgr-service")
+out_hdlr = logging.StreamHandler(sys.stdout)
+out_hdlr.setFormatter(logging.Formatter('%(asctime)s %(message)s'))
+out_hdlr.setLevel(logging.INFO)
+logger.addHandler(out_hdlr)
 logger.setLevel(os.environ.get("LOG_LEVEL", "INFO"))
 
 
@@ -48,8 +53,7 @@ models = [
 
 # Audio downloader
 youtube_cache = VideoInfoCacheInMemory()
-videoinfo_loader = ProxiedVideoInfoLoader(PROXIES)
-audio_downloader = YoutubeAudioLoader(youtube_cache, videoinfo_loader, logger)
+audio_downloader = YoutubeAudioLoader(youtube_cache, logger, PROXIES)
 
 
 # Use case initialization

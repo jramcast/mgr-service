@@ -32,11 +32,12 @@ class EmbeddingsLoader:
 
         for segment in segments:
             if segment.filename in self.cache:
-                print(segment.filename, "getting from cache!")
                 segment_features = self.cache.get(segment.filename)
+                print("Embeddings extracted from cache (HIT)")
             else:
                 segment_features = self.extract_embeddings(segment.filename)
                 self.cache.set(segment.filename, segment_features)
+                print("Embeddings extracted from VGGISH (MISS)")
 
             features.append(segment_features)
 
@@ -45,7 +46,6 @@ class EmbeddingsLoader:
     def extract_embeddings(self, filename):
         example_batch = wavfile_to_examples(filename)
         payload = json.dumps({"instances": example_batch.tolist()})
-        print("embeddings payload", example_batch.shape)
         r = requests.post(
             self.model_service_url,
             data=payload,
@@ -56,5 +56,4 @@ class EmbeddingsLoader:
 
         postprocessed_batch = self.pproc.postprocess(np.array(result))
 
-        print("embeddings result", postprocessed_batch)
         return np.array(postprocessed_batch)
