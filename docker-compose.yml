@@ -23,4 +23,6 @@ services:
       - ff_network
       - lstm_network
       - vggish
+    environment:
+     - PROXIES=
     restart: on-failure

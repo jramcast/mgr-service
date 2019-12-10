@@ -56,13 +56,13 @@ class YoutubeAudioLoader(AudioLoader):
 
     def _get_videoinfo(self, uri: str) -> VideoInfo:
         videoinfo = self.cache.get(uri)
-        if True or videoinfo is None:
-            self.logger.debug(
+        if videoinfo is None:
+            self.logger.info(
                 "Video info retrieved from youtube (MISS): %s", uri)
             videoinfo = self._load_videoinfo_with_retry(uri)
             self.cache.set(uri, videoinfo)
         else:
-            self.logger.debug("Video info retrieved from cache (HIT): %s", uri)
+            self.logger.info("Video info retrieved from cache (HIT): %s", uri)
         return videoinfo
 
     def _load_videoinfo_with_retry(self, uri: str, retry=0) -> VideoInfo:
@@ -78,7 +78,7 @@ class YoutubeAudioLoader(AudioLoader):
 
         try:
             video = pafy.new(uri, basic=False, ydl_opts=youtube_dl_opts)
-            self.logger.debug(
+            self.logger.info(
                 "Downloading video: %s. Proxy: %s. Retry %d",
                 uri,
                 proxy,
@@ -92,7 +92,7 @@ class YoutubeAudioLoader(AudioLoader):
             )
         except Exception as err:
             if retry + 1 < self.max_retries:
-                return self._load_with_retry(uri, retry + 1)
+                return self._load_videoinfo_with_retry(uri, retry + 1)
             else:
                 raise err
 
