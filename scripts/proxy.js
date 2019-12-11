@@ -36,6 +36,7 @@ server.on('connect', (req, clientSocket, head) => {
     console.log("CONNECT:", clientSocket.remoteAddress, clientSocket.remotePort, req.method, req.url)
 
     if (!isAuthenticationValid(req)) {
+        console.log("Invalid authentication")
         clientSocket.write([
             'HTTP/1.1 407 Proxy Valid Authentication Required',
             'Proxy-Authenticate: Basic realm="proxy"',
@@ -49,7 +50,7 @@ server.on('connect', (req, clientSocket, head) => {
     const { port, hostname } = url.parse(`//${req.url}`, false, true) // extract destination host and port from CONNECT request
     if (hostname && port) {
         const serverErrorHandler = (err) => {
-            console.error(err.message)
+            console.error(err.message);
             if (clientSocket) {
                 clientSocket.end(`HTTP/1.1 500 ${err.message}\r\n`)
             }
@@ -76,7 +77,6 @@ server.on('connect', (req, clientSocket, head) => {
         serverSocket.on('error', serverErrorHandler)
         serverSocket.on('end', serverEndHandler)
         serverSocket.on('connect', () => {
-            console.log("connnnnnnectttttttttt");
             clientSocket.write([
                 'HTTP/1.1 200 Connection Established',
                 'Proxy-agent: Node-VPN',
