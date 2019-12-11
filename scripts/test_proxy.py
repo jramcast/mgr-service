@@ -22,4 +22,4 @@ def download(url, retry_count=3, headers={}, proxy=None, data=None):
     return content
 
 
-print(download("https://api.roiback.com/", proxy="http://localhost:9191"))
+print(download("https://api.roiback.com/", proxy="http://mgr:pass@localhost:8383"))
