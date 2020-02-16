@@ -2,6 +2,22 @@
 
 This service, along with [mgr-app](https://github.com/jramcast/mgr-app) is a showcase of **Music Genre Classification** with **Audioset**, using different models.
 
+## Citations
+
+This application is a demo of the research conducted for the following study:
+
+* [Machine learning for music genre: multifaceted review and experimentation with audioset](https://link.springer.com/article/10.1007/s10844-019-00582-9)
+
+If you wish to reference this work, please cite it as:
+
+> Ramírez, J. & Flores, M.J. J Intell Inf Syst (2019). https://doi.org/10.1007/s10844-019-00582-9
+
+## Related repositories
+
+The repository for the application frontend is: https://github.com/jramcast/mgr-app
+
+The repository for models training code is: https://github.com/jramcast/music-genre-classification-audioset
+
 ## Development
 
 ### Make sure you have Python 3.7
