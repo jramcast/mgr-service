@@ -6,7 +6,9 @@ This service, along with [mgr-app](https://github.com/jramcast/mgr-app) is a sho
 
 This application is a demo of the research conducted for the following study:
 
-* [Machine learning for music genre: multifaceted review and experimentation with audioset](https://link.springer.com/article/10.1007/s10844-019-00582-9)
+* [Machine learning for music genre: multifaceted review and experimentation with audioset](https://link.springer.com/article/10.1007/s10844-019-00582-9). 
+
+[Read the article](https://rdcu.be/b87uq).
 
 **If you use this code or wish to reference this work, please cite it as**:
 
