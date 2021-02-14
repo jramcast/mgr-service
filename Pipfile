@@ -14,7 +14,7 @@ autopep8 = "*"
 [packages]
 flask = "*"
 numpy = "*"
-tensorflow = "==1.13.2"
+tensorflow = "==1.15.4"
 resampy = "*"
 soundfile = "*"
 pafy = "*"
