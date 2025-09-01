@@ -31,4 +31,6 @@ ENV PATH="/app/.venv/bin:$PATH"
 
 EXPOSE 8000
 
-CMD [ "uv", "run", "gunicorn", "-w", "4", "-b", "0.0.0.0", "main:app" ]
+# Just one worker because of VideoInfoCacheInMemory.
+# I should switch to a Redis cache to support more workers.
+CMD [ "uv", "run", "gunicorn", "-w", "1", "-b", "0.0.0.0", "main:app" ]
