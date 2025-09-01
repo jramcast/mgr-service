@@ -22,19 +22,11 @@ The repository for models training code is: https://github.com/jramcast/music-ge
 
 ## Development
 
-### Make sure you have Python 3.7
+### Make sure you have `uv`
 
-You can install it with apt:
+See https://docs.astral.sh/uv/getting-started/installation/
 
-```sh
-sudo apt-get update
-sudo apt-get install python3.7
-```
-
-Or you can install [pyenv](https://github.com/pyenv/pyenv). A tool to easily switch between different python versions.
-This tool integrates with pipenv, so that any required Python version will be automatically downloaded when running ```pipenv install```.
-
-### Donwload VGGish model files
+### Download VGGish model files
 
 This model is necessary to convert raw audio files to AudioSet's 128-dimensional embeddings. Download these in `data/vggish`:
 
@@ -55,16 +47,10 @@ Tensorflow models need to be containerzied and served with **Tensorflow Serving*
 
 ### Run the service locally
 
-Install dependencies:
-
-```sh
-pipenv install --dev
-```
-
 Run
 
 ```sh
-docker-compose up
+uv run flask run
 ```
 
 ### Prepare for production
@@ -77,13 +63,12 @@ First, make sure that Tensorflow models are exported for **Tensorflow Serving**:
 
 Then you can either build your Docker images and deploy them to, for example a k8s cluster, or just use docker-compose to run them.
 
+Use the `docker-compose.production.yml` file for production.
+
 ### SSL Setup
 
-You can follow this guide:
+No additional actions required.
 
-https://www.guyatic.net/2017/05/09/configuring-ssl-letsencrypt-certbot-nginx-reverse-proxy-nat/
+The `docker-compose.production.yml` file includes the Caddy service, which takes care of the SSL and certs.
+This service reads the config from the `Caddyfile`.
 
-
-## TODO
-
-Production: Remove tmp files periodically
