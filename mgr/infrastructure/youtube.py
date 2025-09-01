@@ -4,7 +4,7 @@ import subprocess as sp
 from dataclasses import dataclass
 from typing import List
 
-import pafy
+import yt_dlp
 from ..usecases.interfaces import AudioLoader, Cache
 from ..domain.entities import AudioClip, AudioSegment
 
@@ -71,24 +71,29 @@ class YoutubeAudioLoader(AudioLoader):
         proxy = self.proxies[proxy_idx]
         self.current_proxy = proxy
 
+        ydl_opts = {
+            'quiet': True,
+            'no_warnings': True,
+        }
+
         if proxy:
-            youtube_dl_opts = {"proxy": proxy}
-        else:
-            youtube_dl_opts = {}
+            ydl_opts["proxy"] = proxy
 
         try:
-            video = pafy.new(uri, basic=False, ydl_opts=youtube_dl_opts)
+            with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+                info = ydl.extract_info(uri, download=False)
+
             self.logger.info(
-                "Downloading video: %s. Proxy: %s. Retry %d",
+                "Downloading video info: %s. Proxy: %s. Retry %d",
                 uri,
                 proxy,
                 retry
             )
-            audio_url = _get_audio_url(video)
+            audio_url = _get_audio_url(info)
             return VideoInfo(
-                video.videoid,
+                info['id'],
                 audio_url,
-                video.length
+                info['duration']
             )
         except Exception as err:
             if retry + 1 < self.max_retries:
@@ -97,10 +102,19 @@ class YoutubeAudioLoader(AudioLoader):
                 raise err
 
 
-def _get_audio_url(video):
-    best_audio = video.getbestaudio()
-    best_audio_url = best_audio.url
-    return best_audio_url
+def _get_audio_url(info):
+    # Find the best audio format
+    audio_formats = [f for f in info['formats'] if f.get('acodec') != 'none' and f.get('vcodec') == 'none']
+    if not audio_formats:
+        # If no audio-only formats, find best format with audio
+        audio_formats = [f for f in info['formats'] if f.get('acodec') != 'none']
+
+    if audio_formats:
+        # Sort by audio quality (bitrate)
+        best_audio = max(audio_formats, key=lambda f: f.get('abr', 0) or 0)
+        return best_audio['url']
+    else:
+        raise Exception("No audio format found")
 
 
 def _download_raw_audio(videoinfo: VideoInfo, proxy=None):
@@ -149,7 +163,7 @@ def _download_raw_audio(videoinfo: VideoInfo, proxy=None):
         base_path, basename_segment_fmt + '.' + audio_container
     )
 
-    # Download the audio
+    # Segment the audio
     audio_dl_args = [
         'ffmpeg',
         '-i', audio_filepath,       # Specify the input video URL
@@ -217,7 +231,7 @@ def _download_raw_audio_segment(
     if proc.returncode != 0:
         print(stderr)
     else:
-        print("Downloaded audio to " + audio_filepath)
+        print("Downloaded audio segment to " + audio_filepath)
 
     return audio_filepath
 

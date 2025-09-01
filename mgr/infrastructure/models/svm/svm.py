@@ -1,3 +1,4 @@
+import sys
 import joblib
 import numpy as np
 from typing import List
@@ -5,6 +6,17 @@ from mgr.usecases.interfaces import Model
 from mgr.domain.entities import Prediction, AudioSegment
 from mgr.infrastructure.audioset.ontology import MUSIC_GENRE_CLASSES
 from mgr.infrastructure.audioset.vggish.loader import EmbeddingsLoader
+
+# Compatibility shim for old scikit-learn pickle files
+try:
+    import sklearn.svm.classes
+except ImportError:
+    # Create the missing module path for backward compatibility
+    from sklearn import svm
+    if not hasattr(svm, 'classes'):
+        import sklearn.svm._classes as classes_module
+        svm.classes = classes_module
+        sys.modules['sklearn.svm.classes'] = classes_module
 
 
 class SVMModel(Model):

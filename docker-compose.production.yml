@@ -17,12 +17,32 @@ services:
     restart: on-failure
   server:
     build: .
+    volumes:
+    - "/tmp/mgr:/app/.tmp"
     ports:
     - "8000:8000"
     depends_on:
       - ff_network
       - lstm_network
       - vggish
-    environment:
-     - PROXIES=
-    restart: on-failure
+    restart: always
+
+  # For HTTPs serving
+  caddy:
+    image: caddy:2
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      # Your Caddyfile in the project directory
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      # Persistent certs/config
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      - server
+
+volumes:
+  caddy_data:
+  caddy_config:

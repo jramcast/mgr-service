@@ -1,17 +1,36 @@
-FROM tiangolo/meinheld-gunicorn-flask:python3.7
+FROM ghcr.io/astral-sh/uv:python3.9-bookworm-slim
 
+# Install ffmpeg
 RUN apt-get update && \
-    apt-get install -y libsndfile1 ffmpeg && \
-    pip3 install pipenv
+    apt-get install -y libsndfile1 ffmpeg --no-install-recommends \
+    && rm -rf /var/lib/apt/lists/*
 
-# Create app directory
-RUN mkdir -p /app && mkdir /app/.tmp
+# Install the project into `/app`
 WORKDIR /app
 
-# Install app dependencies
-COPY Pipfile Pipfile.lock /app/
-RUN pipenv install --system --deploy
+# Enable bytecode compilation
+ENV UV_COMPILE_BYTECODE=1
 
+# Copy from the cache instead of linking since it's a mounted volume
+ENV UV_LINK_MODE=copy
+
+# Ensure installed tools can be executed out of the box
+ENV UV_TOOL_BIN_DIR=/usr/local/bin
+
+COPY uv.lock /app/
+COPY pyproject.toml /app/
+# Install the project's dependencies using the lockfile and settings
+RUN uv sync --locked --no-install-project --no-dev
+
+# Then, add the rest of the project source code and install it
+# Installing separately from its dependencies allows optimal layer caching
 COPY . /app
 
-EXPOSE 80
+# Place executables in the environment at the front of the path
+ENV PATH="/app/.venv/bin:$PATH"
+
+EXPOSE 8000
+
+# Just one worker because of VideoInfoCacheInMemory.
+# I should switch to a Redis cache to support more workers.
+CMD [ "uv", "run", "gunicorn", "-w", "1", "-b", "0.0.0.0", "main:app" ]

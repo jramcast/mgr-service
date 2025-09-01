@@ -9,6 +9,7 @@
 .editorconfig
 .gitlab-ci.yml
 .editorconfig
+.venv/
 .tmp/
 deployments/
 tests/

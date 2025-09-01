@@ -1,3 +1,4 @@
+import sys
 import joblib
 import numpy as np
 from typing import List
@@ -6,6 +7,17 @@ from mgr.usecases.interfaces import Model
 from mgr.domain.entities import Prediction, AudioSegment
 from mgr.infrastructure.audioset.ontology import MUSIC_GENRE_CLASSES
 from mgr.infrastructure.audioset.vggish.loader import EmbeddingsLoader
+
+# Compatibility shim for old scikit-learn pickle files
+try:
+    import sklearn.preprocessing.label
+except ImportError:
+    # Create the missing module path for backward compatibility
+    from sklearn import preprocessing
+    if not hasattr(preprocessing, 'label'):
+        import sklearn.preprocessing._label as label_module
+        preprocessing.label = label_module
+        sys.modules['sklearn.preprocessing.label'] = label_module
 
 
 @dataclass
