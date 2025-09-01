@@ -29,6 +29,6 @@ COPY . /app
 # Place executables in the environment at the front of the path
 ENV PATH="/app/.venv/bin:$PATH"
 
-EXPOSE 80
+EXPOSE 8000
 
 CMD [ "uv", "run", "gunicorn", "-w", "4", "-b", "0.0.0.0", "main:app" ]

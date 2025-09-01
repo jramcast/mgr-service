@@ -20,7 +20,7 @@ services:
     volumes:
     - "/tmp/mgr:/app/.tmp"
     ports:
-    - "5000:5000"
+    - "8000:8000"
     depends_on:
       - ff_network
       - lstm_network

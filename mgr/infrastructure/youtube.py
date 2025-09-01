@@ -82,9 +82,9 @@ class YoutubeAudioLoader(AudioLoader):
         try:
             with yt_dlp.YoutubeDL(ydl_opts) as ydl:
                 info = ydl.extract_info(uri, download=False)
-                
+
             self.logger.info(
-                "Downloading video: %s. Proxy: %s. Retry %d",
+                "Downloading video info: %s. Proxy: %s. Retry %d",
                 uri,
                 proxy,
                 retry
@@ -108,7 +108,7 @@ def _get_audio_url(info):
     if not audio_formats:
         # If no audio-only formats, find best format with audio
         audio_formats = [f for f in info['formats'] if f.get('acodec') != 'none']
-    
+
     if audio_formats:
         # Sort by audio quality (bitrate)
         best_audio = max(audio_formats, key=lambda f: f.get('abr', 0) or 0)
@@ -163,7 +163,7 @@ def _download_raw_audio(videoinfo: VideoInfo, proxy=None):
         base_path, basename_segment_fmt + '.' + audio_container
     )
 
-    # Download the audio
+    # Segment the audio
     audio_dl_args = [
         'ffmpeg',
         '-i', audio_filepath,       # Specify the input video URL
@@ -231,7 +231,7 @@ def _download_raw_audio_segment(
     if proc.returncode != 0:
         print(stderr)
     else:
-        print("Downloaded audio to " + audio_filepath)
+        print("Downloaded audio segment to " + audio_filepath)
 
     return audio_filepath
 
