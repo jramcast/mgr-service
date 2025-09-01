@@ -1,0 +1,3 @@
+9f1a5f0e-03f3-4dd4-b222-a314c9eea74d.pub.instances.scw.cloud {
+    reverse_proxy server:80
+}
